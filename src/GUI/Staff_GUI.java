@@ -6,26 +6,107 @@ package GUI;
 
 import MyDesign.ScrollBar;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Vector;
+
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import BLL.readerBLL;
+import BLL.staffBLL;
+import DTO.Readers;
+import DTO.Staff;
 
 /**
  *
  * @author QUANG DIEN
  */
 public class Staff_GUI extends javax.swing.JPanel {
-
+	staffBLL sBLL;
     /**
-     * Creates new form Staff_GUI
+     * Creates new form Staff_GUIs
      */
-    public Staff_GUI() {
-        initComponents();
+    public Staff_GUI(int userID,String roleID) {
+        initComponents(userID,roleID);
         spTable.setVerticalScrollBar(new ScrollBar());
         spTable.getVerticalScrollBar().setBackground(Color.WHITE);
         spTable.getViewport().setBackground(Color.WHITE);
+        try{
+        	sBLL=new staffBLL();
+        	if(roleID=="AD") {
+        		addDefaultAD();
+        	}
+        	if(roleID=="QL") {
+        		addDefaultQL();
+        	}
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(null,ex.getMessage());
+        }
         JPanel p = new JPanel();
         p.setBackground(Color.WHITE);
         spTable.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
+    }
+    
+    public void addDefaultAD() throws Exception{
+        Vector<Staff> arr=sBLL.getAllAD();
+        for(int i=0;i<arr.size();i++){
+            Staff acc=arr.get(i);
+            int id=acc.getId();
+            String name=acc.getName();
+            String tel=acc.getTel();
+            String address=acc.getAddress();
+            String username=acc.getUsername();
+            String role=acc.getRole();
+            Object row[] = {i+1,id,name,username,role,tel,address};
+            tbDanhSachNhanVien.addRow(row);
+        }
+    }
+    
+    public void addDefaultQL() throws Exception{
+        Vector<Staff> arr=sBLL.getAllQL();
+        for(int i=0;i<arr.size();i++){
+            Staff acc=arr.get(i);
+            int id=acc.getId();
+            String name=acc.getName();
+            String tel=acc.getTel();
+            String address=acc.getAddress();
+            String username=acc.getUsername();
+            String role=acc.getRole();
+            Object row[] = {i+1,id,name,username,role,tel,address};
+            tbDanhSachNhanVien.addRow(row);
+        }
+    }
+    
+    public void findVal(String str,String roleID) throws Exception {
+    	Vector<Staff> arr=new Vector<Staff>();
+    	if(roleID=="AD") {
+    		arr=sBLL.allOutSearchAD(str);
+    	}
+    	if(roleID=="QL") {
+    		arr=sBLL.allOutSearchQL(str);
+    	}
+    	if(arr.size()==0) {
+    		JOptionPane.showMessageDialog(null,"Không tìm thấy nhân viên theo yêu cầu");
+    		return;
+    	}
+    	tbDanhSachNhanVien.setRowCount(0);
+    	for(int i=0;i<arr.size();i++){
+    		Staff acc=arr.get(i);
+            int id=acc.getId();
+            String name=acc.getName();
+            String tel=acc.getTel();
+            String address=acc.getAddress();
+            String username=acc.getUsername();
+            String role=acc.getRole();
+            Object row[] = {i+1,id,name,username,role,tel,address};
+            tbDanhSachNhanVien.addRow(row);
+        }
     }
 
     /**
@@ -35,7 +116,7 @@ public class Staff_GUI extends javax.swing.JPanel {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents(int userID,String roleID) {
 
         panelBorder1 = new MyDesign.PanelBorder();
         jLabel5 = new javax.swing.JLabel();
@@ -71,6 +152,37 @@ public class Staff_GUI extends javax.swing.JPanel {
             }
         });
         spTable.setViewportView(tbDanhSachNhanVien);
+        tbDanhSachNhanVien.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int row = tbDanhSachNhanVien.getSelectedRow();
+                    if (row >= 0) {
+                        String cellValue = tbDanhSachNhanVien.getValueAt(row, 1).toString();
+                        int cellVal=Integer.parseInt(cellValue);
+                        try {
+                        	StaffInfor_Dialog ruid=new StaffInfor_Dialog(new javax.swing.JFrame(), true,cellVal,tbDanhSachNhanVien,roleID,userID);
+	                        ruid.setVisible(true);
+                        }catch(Exception ex) {
+                        	JOptionPane.showMessageDialog(null,ex.getMessage());
+                        }
+                    }
+                }
+            }
+        });
+        
+        txtTimKiem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String text = txtTimKiem.getText().trim();
+                try {
+                	findVal(text,roleID);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null,e1.getMessage());
+				}
+            }
+        });
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/search.png"))); // NOI18N
 
@@ -107,6 +219,13 @@ public class Staff_GUI extends javax.swing.JPanel {
         btnNhanVienMoi.setColorClick(new java.awt.Color(153, 204, 255));
         btnNhanVienMoi.setColorOver(new java.awt.Color(22, 113, 221));
         btnNhanVienMoi.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        btnNhanVienMoi.addActionListener(new ActionListener() {
+         	 @Override
+            public void actionPerformed(ActionEvent e){
+         		StaffAdd_Dialog sad=new StaffAdd_Dialog(new javax.swing.JFrame(), true,tbDanhSachNhanVien,userID,roleID);
+         		sad.setVisible(true);
+       	 }
+       });
 
         javax.swing.GroupLayout panelBorder1Layout = new javax.swing.GroupLayout(panelBorder1);
         panelBorder1.setLayout(panelBorder1Layout);

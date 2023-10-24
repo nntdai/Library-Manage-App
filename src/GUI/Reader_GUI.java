@@ -6,15 +6,32 @@ package GUI;
 
 import MyDesign.ScrollBar;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.Vector;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import BLL.readerBLL;
+import DTO.Readers;
 
 /**
  *
  * @author QUANG DIEN
  */
 public class Reader_GUI extends javax.swing.JPanel {
-
+    private readerBLL rBLL;
     /**
      * Creates new form Reader_GUI
      */
@@ -23,9 +40,69 @@ public class Reader_GUI extends javax.swing.JPanel {
         spTable.setVerticalScrollBar(new ScrollBar());
         spTable.getVerticalScrollBar().setBackground(Color.WHITE);
         spTable.getViewport().setBackground(Color.WHITE);
+        try{
+            rBLL=new readerBLL();
+            rBLL.updateFineDate();
+            addDefault();
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(null,ex.getMessage());
+        }
         JPanel p = new JPanel();
         p.setBackground(Color.WHITE);
         spTable.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
+    }
+
+    public void addDefault() throws Exception{
+        Vector<Readers> arr=rBLL.getAll();
+        for(int i=0;i<arr.size();i++){
+            Readers acc=arr.get(i);
+            int id=acc.getId();
+            String name=acc.getName();
+            String tel=acc.getTel();
+            String address=acc.getAddress();
+            LocalDate fineDate=acc.getFineDate();
+            Boolean isLocked=acc.getisLocked();
+            String isL="Mở";
+            if(isLocked){
+                isL="Khoá";
+            }
+            long daysBetween=0; 
+            if(fineDate!=null) {
+	            LocalDate cuDate=LocalDate.now();
+	            daysBetween = ChronoUnit.DAYS.between(cuDate, fineDate);
+            }        
+            Object row[] = {i+1,id,name,tel,address,daysBetween,isL};
+            tbDanhSachDocGia.addRow(row);
+        }
+    }
+    
+    public void findVal(String str) throws Exception {
+    	Vector<Readers> arr=rBLL.allOutSearch(str);
+    	if(arr.size()==0) {
+    		JOptionPane.showMessageDialog(null,"Không tìm thấy độc giả theo yêu cầu");
+    		return;
+    	}
+    	tbDanhSachDocGia.setRowCount(0);
+    	for(int i=0;i<arr.size();i++){
+            Readers acc=arr.get(i);
+            int id=acc.getId();
+            String name=acc.getName();
+            String tel=acc.getTel();
+            String address=acc.getAddress();
+            LocalDate fineDate=acc.getFineDate();
+            Boolean isLocked=acc.getisLocked();
+            String isL="Mở";
+            if(isLocked){
+                isL="Khoá";
+            }
+            long daysBetween=0; 
+            if(fineDate!=null) {
+	            LocalDate cuDate=LocalDate.now();
+	            daysBetween = ChronoUnit.DAYS.between(cuDate, fineDate);
+            }        
+            Object row[] = {i+1,id,name,tel,address,daysBetween,isL};
+            tbDanhSachDocGia.addRow(row);
+        }
     }
 
     /**
@@ -59,7 +136,7 @@ public class Reader_GUI extends javax.swing.JPanel {
 
             },
             new String [] {
-                "STT", "Mã độc giả", "Tên độc giả", "Số điện thoại", "Địa chỉ", "Đã mượn ", "Trạng thái"
+                "STT", "Mã độc giả", "Tên độc giả", "Số điện thoại", "Địa chỉ", "Số ngày khoá", "Trạng thái"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -70,7 +147,40 @@ public class Reader_GUI extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        
         spTable.setViewportView(tbDanhSachDocGia);
+        
+        tbDanhSachDocGia.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int row = tbDanhSachDocGia.getSelectedRow();
+                    if (row >= 0) {
+                        String cellValue = tbDanhSachDocGia.getValueAt(row, 1).toString();
+                        int cellVal=Integer.parseInt(cellValue);
+                        try {
+	                        ReaderUpdateInfor_Dialog ruid=new ReaderUpdateInfor_Dialog(new javax.swing.JFrame(), true,cellVal,tbDanhSachDocGia);
+	                        ruid.setVisible(true);
+                        }catch(Exception ex) {
+                        	JOptionPane.showMessageDialog(null,ex.getMessage());
+                        }
+                    }
+                }
+            }
+        });
+        
+        txtTimKiem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String text = txtTimKiem.getText().trim();
+                try {
+					findVal(text);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null,e1.getMessage());
+				}
+            }
+        });
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/search.png"))); // NOI18N
 
@@ -107,6 +217,17 @@ public class Reader_GUI extends javax.swing.JPanel {
         btnDocGiaMoi.setColorClick(new java.awt.Color(153, 204, 255));
         btnDocGiaMoi.setColorOver(new java.awt.Color(22, 113, 221));
         btnDocGiaMoi.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        btnDocGiaMoi.addActionListener(new ActionListener() {
+        	 @Override
+             public void actionPerformed(ActionEvent e){
+        		 try {
+	        		 ReaderAdd_Dialog rad=new ReaderAdd_Dialog(new javax.swing.JFrame(), true,tbDanhSachDocGia);
+	        		 rad.setVisible(true);
+        		 }catch(Exception ex) {
+        			 JOptionPane.showMessageDialog(null,ex.getMessage());
+        		 }
+        	 }
+        });
 
         javax.swing.GroupLayout panelBorder1Layout = new javax.swing.GroupLayout(panelBorder1);
         panelBorder1.setLayout(panelBorder1Layout);

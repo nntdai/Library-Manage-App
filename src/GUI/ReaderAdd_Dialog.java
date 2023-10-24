@@ -4,18 +4,38 @@
  */
 package GUI;
 
+import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.JOptionPane;
+
+import BLL.readerBLL;
+import DTO.Readers;
+
 /**
  *
  * @author QUANG DIEN
  */
 public class ReaderAdd_Dialog extends javax.swing.JDialog {
-
+	readerBLL rBLL;
     /**
      * Creates new form TicketSearch_Dialog
+     * @throws SQLException 
+     * @throws ClassNotFoundException 
      */
-    public ReaderAdd_Dialog(java.awt.Frame parent, boolean modal) {
+    public ReaderAdd_Dialog(java.awt.Frame parent, boolean modal,MyDesign.MyTable tab) throws ClassNotFoundException, SQLException {
         super(parent, modal);
-        initComponents();
+        rBLL=new readerBLL();
+        initComponents(tab);   
     }
 
     /**
@@ -25,7 +45,32 @@ public class ReaderAdd_Dialog extends javax.swing.JDialog {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    public void addDefault(MyDesign.MyTable tab) throws Exception{
+    	tab.setRowCount(0);
+        Vector<Readers> arr=rBLL.getAll();
+        for(int i=0;i<arr.size();i++){
+            Readers acc=arr.get(i);
+            int id=acc.getId();
+            String name=acc.getName();
+            String tel=acc.getTel();
+            String address=acc.getAddress();
+            LocalDate fineDate=acc.getFineDate();
+            Boolean isLocked=acc.getisLocked();
+            String isL="Mở";
+            if(isLocked){
+                isL="Khoá";
+            }
+            long daysBetween=0; 
+            if(fineDate!=null) {
+	            LocalDate cuDate=LocalDate.now();
+	            daysBetween = ChronoUnit.DAYS.between(cuDate, fineDate);
+            }        
+            Object row[] = {i+1,id,name,tel,address,daysBetween,isL};
+            tab.addRow(row);
+        }
+    }
+    
+    private void initComponents(MyDesign.MyTable tab) {
 
         panelBorder_Statistic_Blue1 = new MyDesign.PanelBorder_Statistic_Blue();
         panelBorder_Basic1 = new MyDesign.PanelBorder_Basic();
@@ -62,6 +107,24 @@ public class ReaderAdd_Dialog extends javax.swing.JDialog {
         btnThemDocGia.setBorderColor(new java.awt.Color(22, 113, 221));
         btnThemDocGia.setColor(new java.awt.Color(22, 113, 221));
         btnThemDocGia.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnThemDocGia.addActionListener(new ActionListener() {
+       	 @Override
+            public void actionPerformed(ActionEvent e){
+       		 	String name=txtTen.getText().trim();
+       		    String tel=txtSoDienThoai.getText().trim();
+       		    String address=txtDiaChi.getText().trim();
+       		    try {
+					if(checkDataVal(name,tel,address)) {
+						JOptionPane.showMessageDialog(null,rBLL.addReader(new Readers(name,tel,address)));
+						addDefault(tab);
+						dispose();
+					}
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null,e1.getMessage());
+				}
+       	 }
+       });
 
         javax.swing.GroupLayout panelBorder_Basic1Layout = new javax.swing.GroupLayout(panelBorder_Basic1);
         panelBorder_Basic1.setLayout(panelBorder_Basic1Layout);
@@ -147,6 +210,42 @@ public class ReaderAdd_Dialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    public boolean checkDataVal(String name,String tel,String address) throws HeadlessException, FileNotFoundException, ClassNotFoundException, IOException, SQLException {
+    	if(name.equals("")) {
+    		JOptionPane.showMessageDialog(null,"Họ và tên không được để trống");
+    		txtTen.requestFocus();
+    		return false;
+    	}
+    	String nameReg = "^[\\p{L} \\.'\\-]+$";
+    	if(!name.matches(nameReg)) {
+    		JOptionPane.showMessageDialog(null,"Họ tên không hợp lệ");
+    		txtTen.requestFocus();
+    		return false;
+    	}
+    	if(tel.equals("")) {
+    		JOptionPane.showMessageDialog(null,"Số điện thoại không được để trống");
+    		txtSoDienThoai.requestFocus();
+    		return false;
+    	}
+    	if(!rBLL.checkTel(tel)) {
+    		JOptionPane.showMessageDialog(null,"Số điện thoại đã có trong dữ liệu");
+    		txtSoDienThoai.requestFocus();
+    		return false;
+    	}
+    	String telReg = "^0[1-9][0-9]{8}$";
+    	if(!tel.matches(telReg)) {
+    		JOptionPane.showMessageDialog(null,"Số điện thoại không hợp lệ");
+    		txtSoDienThoai.requestFocus();
+    		return false;
+    	}
+    	if(address.equals("")) {
+    		JOptionPane.showMessageDialog(null,"Địa chỉ không được để trống");
+    		txtDiaChi.requestFocus();
+    		return false;
+    	}
+    	return true;
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -176,18 +275,24 @@ public class ReaderAdd_Dialog extends javax.swing.JDialog {
         //</editor-fold>
 
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                ReaderAdd_Dialog dialog = new ReaderAdd_Dialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                ReaderAdd_Dialog dialog = null;
+//				try {
+//					dialog = new ReaderAdd_Dialog(new javax.swing.JFrame(), true);
+//				} catch (HeadlessException | ClassNotFoundException | SQLException e1) {
+//					// TODO Auto-generated catch block
+//					JOptionPane.showMessageDialog(null,e1.getMessage());
+//				}
+//                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+//                    @Override
+//                    public void windowClosing(java.awt.event.WindowEvent e) {
+//                        System.exit(0);
+//                    }
+//                });
+//                dialog.setVisible(true);
+//            }
+//        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

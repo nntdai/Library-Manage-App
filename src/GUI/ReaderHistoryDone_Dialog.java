@@ -6,21 +6,50 @@ package GUI;
 
 import MyDesign.ScrollBar;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.time.LocalDate;
+import java.util.Vector;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JViewport;
+import javax.swing.Timer;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+
+import BLL.smallBCBLL;
+import DTO.smallBC;
+import DTO.smallBook;
 
 /**
  *
  * @author QUANG DIEN
  */
 public class ReaderHistoryDone_Dialog extends javax.swing.JDialog {
-
+    smallBCBLL sbc;
+	Vector<smallBC> a;
     /**
      * Creates new form ReaderHistory_Dialog
      */
-    public ReaderHistoryDone_Dialog(java.awt.Frame parent, boolean modal) {
+    public ReaderHistoryDone_Dialog(java.awt.Frame parent, boolean modal,int id) {
         super(parent, modal);
-        initComponents();
+        initComponents(id);
+        try {
+			sbc=new smallBCBLL();
+			getData(id);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null,e.getMessage());
+		}
         spTable.setVerticalScrollBar(new ScrollBar());
         spTable.getVerticalScrollBar().setBackground(Color.WHITE);
         spTable.getViewport().setBackground(Color.WHITE);
@@ -33,6 +62,96 @@ public class ReaderHistoryDone_Dialog extends javax.swing.JDialog {
         sp.getViewport().setBackground(Color.WHITE);
         p.setBackground(Color.WHITE);
         sp.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
+        clickFirstRow();
+        rbTatCa.setSelected(true);
+    }
+    
+    public void clickFirstRow() {
+    	tbPhieuMuon.changeSelection(0, 0, false, false);
+        int firstRow = 0;
+        int firstColumn = 0;
+        int clickCount = 1; // Number of clicks (1 for single-click)
+        int modifiers = 0; // No additional modifiers
+        if(a.size()>0) {
+	        MouseEvent mouseEvent = new MouseEvent(
+	        		tbPhieuMuon, MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(),
+	                modifiers, firstColumn, firstRow, clickCount, false);
+	
+	        for (MouseListener listener : tbPhieuMuon.getMouseListeners()) {
+	            listener.mouseClicked(mouseEvent);
+	        }	
+        }else {
+        	panelBorder5.setBackground(new java.awt.Color(242, 255, 244));
+        	viewport.setBackground(new java.awt.Color(242, 255, 244));
+        	myTable1.setRowCount(0);
+        	lbMaPM.setText("");
+        	lbTrangThai.setText("");
+        	lbTrangThai.setIcon(null);
+        }
+    }
+
+    public void getData(int id) throws Exception {
+    	tbPhieuMuon.setRowCount(0);
+    	a=sbc.getAll(id);
+    	for(int i=0;i<a.size();i++) {
+    		smallBC acc=a.get(i);
+    		LocalDate startDate =acc.getStartDate();
+    		int num=acc.getNum();
+    		String staffName=acc.getStaffName();
+    		Object row[] = {i+1,startDate,num,staffName};
+    		tbPhieuMuon.addRow(row);
+    	}
+    }
+    
+    public void getDataReturn(int id) throws Exception {
+    	tbPhieuMuon.setRowCount(0);
+    	a=sbc.getReturn(id);
+    	for(int i=0;i<a.size();i++) {
+    		smallBC acc=a.get(i);
+    		LocalDate startDate =acc.getStartDate();
+    		int num=acc.getNum();
+    		String staffName=acc.getStaffName();
+    		Object row[] = {i+1,startDate,num,staffName};
+    		tbPhieuMuon.addRow(row);
+    	}
+    }
+    
+    public void getDataNoReturn(int id) throws Exception {
+    	tbPhieuMuon.setRowCount(0);
+    	a=sbc.getNoReturn(id);
+    	for(int i=0;i<a.size();i++) {
+    		smallBC acc=a.get(i);
+    		LocalDate startDate =acc.getStartDate();
+    		int num=acc.getNum();
+    		String staffName=acc.getStaffName();
+    		Object row[] = {i+1,startDate,num,staffName};
+    		tbPhieuMuon.addRow(row);
+    	}
+    }
+
+    public void addValTab(int idx) {
+    	myTable1.setRowCount(0);
+    	Vector<smallBook> tmp=a.get(idx).getList();
+    	for(int i=0;i<tmp.size();i++) {
+    		Object row1[] = {"Sách "+(i+1)," "};
+    		Object row2[] = {"Tên sách",tmp.get(i).getName()};
+    		Object row3[] = {"Tác giả",tmp.get(i).getAuthor().get(0)};
+    		Object row4[][]=new Object[tmp.get(i).getAuthor().size()][2];
+    		for(int j=1;j<tmp.get(i).getAuthor().size();j++) {
+    			row4[j][0]="";
+    			row4[j][1]=tmp.get(i).getAuthor().get(j);
+    		}
+    		Object row5[] = {"Số lượng",tmp.get(i).getNum()};
+    		Object row6[] = {"Báo mất",tmp.get(i).getLost()};
+    		myTable1.addRow(row1);
+    		myTable1.addRow(row2);
+    		myTable1.addRow(row3);
+    		for(int j=1;j<tmp.get(i).getAuthor().size();j++) {
+    			myTable1.addRow(row4[j]);
+    		}
+    		myTable1.addRow(row5);
+    		myTable1.addRow(row6);
+    	}
     }
 
     /**
@@ -42,8 +161,9 @@ public class ReaderHistoryDone_Dialog extends javax.swing.JDialog {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents(int userID) {
 
+        btnGroup = new javax.swing.ButtonGroup();
         panelBorder_Statistic_Blue1 = new MyDesign.PanelBorder_Statistic_Blue();
         panelBorder_Basic1 = new MyDesign.PanelBorder_Basic();
         panelBorder1 = new MyDesign.PanelBorder();
@@ -51,22 +171,15 @@ public class ReaderHistoryDone_Dialog extends javax.swing.JDialog {
         spTable = new javax.swing.JScrollPane();
         tbPhieuMuon = new MyDesign.MyTable();
         panelBorder_Basic2 = new MyDesign.PanelBorder_Basic();
-        jLabel8 = new javax.swing.JLabel();
-        txtTimKiem = new MyDesign.SearchText();
-        sp = new javax.swing.JScrollPane();
+        rbTatCa = new javax.swing.JRadioButton();
+        rbDaTra = new javax.swing.JRadioButton();
+        rbChuaTra = new javax.swing.JRadioButton();
         panelBorder5 = new MyDesign.PanelBorder();
         lbMaPM = new javax.swing.JLabel();
         lbTrangThai = new javax.swing.JLabel();
         jLabel33 = new javax.swing.JLabel();
-        txtSTTSach = new javax.swing.JLabel();
-        jLabel37 = new javax.swing.JLabel();
-        jLabel38 = new javax.swing.JLabel();
-        jLabel39 = new javax.swing.JLabel();
-        txtDocGia = new javax.swing.JLabel();
-        txtTacGia = new javax.swing.JLabel();
-        txtSoLuong = new javax.swing.JLabel();
-        jLabel40 = new javax.swing.JLabel();
-        txtBaoMat = new javax.swing.JLabel();
+        sp = new javax.swing.JScrollPane();
+        myTable1 = new MyDesign.MyTable();
         jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -82,7 +195,7 @@ public class ReaderHistoryDone_Dialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                "STT", "Ngày mượn", "Số quyển", "Thủ kho"
+                "STT", "Ngày mượn", "Số quyển", "Nhân viên"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -94,29 +207,111 @@ public class ReaderHistoryDone_Dialog extends javax.swing.JDialog {
             }
         });
         spTable.setViewportView(tbPhieuMuon);
+        tbPhieuMuon.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 1) {
+                    int row = tbPhieuMuon.getSelectedRow();
+                    if (row >= 0) {
+                    	smallBC tmp =a.get(row);
+                    	lbMaPM.setText("#"+tmp.getId());
+                        addValTab(row);
+                        if(tmp.getRealReDate()==null) {
+                        	lbTrangThai.setText("Chưa trả");
+                            lbTrangThai.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/RedNode.png")));
+                        	lbTrangThai.setForeground(new java.awt.Color(234, 38, 44));
+                        	lbMaPM.setForeground(new java.awt.Color(234, 38, 44));
+                        	panelBorder5.setBackground(new java.awt.Color(255, 241, 241));
+                            viewport.setBackground(new java.awt.Color(255, 241, 241));
+                            for (int i = 0; i < myTable1.getColumnCount(); i++) {
+                            	myTable1.getColumnModel().getColumn(i).setCellRenderer(cellRed);
+                            }
+                        }else {
+                        	lbTrangThai.setText("Đã trả");
+                        	lbTrangThai.setForeground(new java.awt.Color(18, 210, 49));
+                            lbTrangThai.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Node.png")));
+                        	lbMaPM.setForeground(new java.awt.Color(18, 210, 49));
+                        	panelBorder5.setBackground(new java.awt.Color(242, 255, 244));
+                        	viewport.setBackground(new java.awt.Color(242, 255, 244));
+                        	for (int i = 0; i < myTable1.getColumnCount(); i++) {
+                            	myTable1.getColumnModel().getColumn(i).setCellRenderer(cellGreen);
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
-        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/search.png"))); // NOI18N
+
+        btnGroup.add(rbTatCa);
+        rbTatCa.setText("Tất cả");
+        rbTatCa.setBackground(Color.WHITE);
+        rbTatCa.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	try {
+					getData(userID);
+					clickFirstRow();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null,e1.getMessage());
+				}
+            }
+        });
+        
+        btnGroup.add(rbDaTra);
+        rbDaTra.setText("Đã trả");
+        rbDaTra.setBackground(Color.WHITE);
+        rbDaTra.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	try {
+					getDataReturn(userID);
+					clickFirstRow();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null,e1.getMessage());
+				}
+            }
+        });
+
+        btnGroup.add(rbChuaTra);
+        rbChuaTra.setText("Chưa trả");
+        rbChuaTra.setBackground(Color.WHITE);
+        rbChuaTra.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	try {
+					getDataNoReturn(userID);
+					clickFirstRow();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null,e1.getMessage());
+				}
+            }
+        });
+
 
         javax.swing.GroupLayout panelBorder_Basic2Layout = new javax.swing.GroupLayout(panelBorder_Basic2);
         panelBorder_Basic2.setLayout(panelBorder_Basic2Layout);
         panelBorder_Basic2Layout.setHorizontalGroup(
             panelBorder_Basic2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBorder_Basic2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(txtTimKiem, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(rbTatCa)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(rbDaTra)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(rbChuaTra)
                 .addContainerGap())
         );
         panelBorder_Basic2Layout.setVerticalGroup(
             panelBorder_Basic2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBorder_Basic2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelBorder_Basic2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelBorder_Basic2Layout.createSequentialGroup()
-                        .addComponent(txtTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBorder_Basic2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(panelBorder_Basic2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(rbDaTra)
+                    .addComponent(rbChuaTra)
+                    .addComponent(rbTatCa))
                 .addContainerGap())
         );
 
@@ -126,14 +321,12 @@ public class ReaderHistoryDone_Dialog extends javax.swing.JDialog {
             panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBorder1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(panelBorder1Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(panelBorder_Basic2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelBorder1Layout.createSequentialGroup()
-                        .addComponent(spTable, javax.swing.GroupLayout.PREFERRED_SIZE, 464, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addComponent(spTable, javax.swing.GroupLayout.PREFERRED_SIZE, 464, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelBorder1Layout.setVerticalGroup(
@@ -147,7 +340,7 @@ public class ReaderHistoryDone_Dialog extends javax.swing.JDialog {
                         .addContainerGap()
                         .addComponent(panelBorder_Basic2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spTable, javax.swing.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)
+                .addComponent(spTable, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -156,42 +349,69 @@ public class ReaderHistoryDone_Dialog extends javax.swing.JDialog {
         panelBorder5.setPreferredSize(new java.awt.Dimension(217, 327));
 
         lbMaPM.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
-        lbMaPM.setForeground(new java.awt.Color(18, 210, 49));
         lbMaPM.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbMaPM.setText("#LB01");
 
         lbTrangThai.setForeground(new java.awt.Color(18, 210, 49));
         lbTrangThai.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbTrangThai.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Node.png"))); // NOI18N
-        lbTrangThai.setText("Đã trả");
 
         jLabel33.setFont(new java.awt.Font("SansSerif", 0, 10)); // NOI18N
         jLabel33.setForeground(new java.awt.Color(127, 127, 127));
         jLabel33.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel33.setText("MÃ PHIẾU MƯỢN");
 
-        txtSTTSach.setForeground(new java.awt.Color(127, 127, 127));
-        txtSTTSach.setText("Sách 1");
+        sp.setBorder(null);
+        sp.setColumnHeaderView(null);
+        sp.setColumnHeaderView(null);
 
-        jLabel37.setFont(new java.awt.Font("SansSerif", 1, 13)); // NOI18N
-        jLabel37.setText("Tên sách");
+        cellRed = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                component.setBackground(new java.awt.Color(255, 241, 241));
+                myTable1.setGridColor(new java.awt.Color(255, 241, 241));
+                if (column == 0) {
+                    Font boldFont = new Font(component.getFont().getName(), Font.BOLD, component.getFont().getSize());
+                    component.setFont(boldFont);
+                }
+                return component;
+            }
+        };
+        
+        cellGreen = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                component.setBackground(new java.awt.Color(242, 255, 244));
+                myTable1.setGridColor(new java.awt.Color(242, 255, 244));
+                if (column == 0) {
+                    Font boldFont = new Font(component.getFont().getName(), Font.BOLD, component.getFont().getSize());
+                    component.setFont(boldFont);
+                }
+                return component;
+            }
+        };
 
-        jLabel38.setFont(new java.awt.Font("SansSerif", 1, 13)); // NOI18N
-        jLabel38.setText("Tác giả");
+        myTable1.setBackground(new java.awt.Color(242, 255, 244));
+        myTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
 
-        jLabel39.setFont(new java.awt.Font("SansSerif", 1, 13)); // NOI18N
-        jLabel39.setText("Số lượng");
+            },
+            new String [] {
+                "", ""
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                true, false
+            };
 
-        txtDocGia.setText("Một chiều cô đơn");
-
-        txtTacGia.setText("Lâm Chấn Huy");
-
-        txtSoLuong.setText("2");
-
-        jLabel40.setFont(new java.awt.Font("SansSerif", 1, 13)); // NOI18N
-        jLabel40.setText("Báo mất");
-
-        txtBaoMat.setText("1");
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        JTableHeader tableHeader = myTable1.getTableHeader();
+        tableHeader.setPreferredSize(new java.awt.Dimension(0, 0));
+        sp.setViewportView(myTable1);
+        viewport = sp.getViewport();
 
         javax.swing.GroupLayout panelBorder5Layout = new javax.swing.GroupLayout(panelBorder5);
         panelBorder5.setLayout(panelBorder5Layout);
@@ -200,28 +420,10 @@ public class ReaderHistoryDone_Dialog extends javax.swing.JDialog {
             .addGroup(panelBorder5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelBorder5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelBorder5Layout.createSequentialGroup()
-                        .addComponent(jLabel38)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtTacGia, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel33, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbMaPM, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(panelBorder5Layout.createSequentialGroup()
-                        .addComponent(txtSTTSach)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(panelBorder5Layout.createSequentialGroup()
-                        .addComponent(jLabel37)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtDocGia, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBorder5Layout.createSequentialGroup()
-                        .addComponent(jLabel39)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
-                        .addComponent(txtSoLuong, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(lbTrangThai, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(panelBorder5Layout.createSequentialGroup()
-                        .addComponent(jLabel40)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
-                        .addComponent(txtBaoMat, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(sp, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panelBorder5Layout.setVerticalGroup(
@@ -234,27 +436,9 @@ public class ReaderHistoryDone_Dialog extends javax.swing.JDialog {
                 .addGap(0, 0, 0)
                 .addComponent(lbTrangThai)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtSTTSach)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelBorder5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel37)
-                    .addComponent(txtDocGia))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelBorder5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel38)
-                    .addComponent(txtTacGia))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelBorder5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel39)
-                    .addComponent(txtSoLuong))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelBorder5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel40)
-                    .addComponent(txtBaoMat))
-                .addContainerGap(333, Short.MAX_VALUE))
+                .addComponent(sp)
+                .addContainerGap())
         );
-
-        sp.setViewportView(panelBorder5);
 
         javax.swing.GroupLayout panelBorder_Basic1Layout = new javax.swing.GroupLayout(panelBorder_Basic1);
         panelBorder_Basic1.setLayout(panelBorder_Basic1Layout);
@@ -264,16 +448,16 @@ public class ReaderHistoryDone_Dialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(panelBorder1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sp)
+                .addComponent(panelBorder5, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
                 .addContainerGap())
         );
         panelBorder_Basic1Layout.setVerticalGroup(
             panelBorder_Basic1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBorder_Basic1Layout.createSequentialGroup()
                 .addContainerGap(8, Short.MAX_VALUE)
-                .addGroup(panelBorder_Basic1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(sp)
-                    .addComponent(panelBorder1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(panelBorder_Basic1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(panelBorder1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelBorder5, javax.swing.GroupLayout.DEFAULT_SIZE, 522, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -298,7 +482,7 @@ public class ReaderHistoryDone_Dialog extends javax.swing.JDialog {
             panelBorder_Statistic_Blue1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBorder_Statistic_Blue1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelBorder_Basic1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -348,44 +532,41 @@ public class ReaderHistoryDone_Dialog extends javax.swing.JDialog {
         //</editor-fold>
 
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                ReaderHistoryDone_Dialog dialog = new ReaderHistoryDone_Dialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
+        // java.awt.EventQueue.invokeLater(new Runnable() {
+        //     public void run() {
+        //         ReaderHistoryDone_Dialog dialog = new ReaderHistoryDone_Dialog(new javax.swing.JFrame(), true);
+        //         dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+        //             @Override
+        //             public void windowClosing(java.awt.event.WindowEvent e) {
+        //                 System.exit(0);
+        //             }
+        //         });
+        //         dialog.setVisible(true);
+        //     }
+        // });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup btnGroup;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel33;
-    private javax.swing.JLabel jLabel37;
-    private javax.swing.JLabel jLabel38;
-    private javax.swing.JLabel jLabel39;
-    private javax.swing.JLabel jLabel40;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel lbMaPM;
     private javax.swing.JLabel lbTrangThai;
+    private MyDesign.MyTable myTable1;
     private MyDesign.PanelBorder panelBorder1;
     private MyDesign.PanelBorder panelBorder5;
     private MyDesign.PanelBorder_Basic panelBorder_Basic1;
     private MyDesign.PanelBorder_Basic panelBorder_Basic2;
     private MyDesign.PanelBorder_Statistic_Blue panelBorder_Statistic_Blue1;
+    private javax.swing.JRadioButton rbChuaTra;
+    private javax.swing.JRadioButton rbDaTra;
+    private javax.swing.JRadioButton rbTatCa;
     private javax.swing.JScrollPane sp;
     private javax.swing.JScrollPane spTable;
     private MyDesign.MyTable tbPhieuMuon;
-    private javax.swing.JLabel txtBaoMat;
-    private javax.swing.JLabel txtDocGia;
-    private javax.swing.JLabel txtSTTSach;
-    private javax.swing.JLabel txtSoLuong;
-    private javax.swing.JLabel txtTacGia;
-    private MyDesign.SearchText txtTimKiem;
+    private JViewport viewport;
+    private DefaultTableCellRenderer cellRed;
+    private DefaultTableCellRenderer cellGreen;
     // End of variables declaration//GEN-END:variables
 }

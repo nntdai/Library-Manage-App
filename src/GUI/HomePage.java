@@ -22,7 +22,7 @@ public class HomePage extends javax.swing.JFrame {
     /**
      * Creates new form HomePage
      */
-    public HomePage() {
+    public HomePage(int userID,String roleID) {
         initComponents();
         setBackground(new Color(0,0,0,0));
         initMoving(this);
@@ -43,7 +43,7 @@ public class HomePage extends javax.swing.JFrame {
                 } else if(index == 5){
                     setForm(new Reader_GUI());
                 } else if(index == 6){
-                    setForm(new Staff_GUI());
+                    setForm(new Staff_GUI(userID,roleID));
                 } else if(index == 7){
                     setForm(new More_GUI());
                 } else if(index == 8){
@@ -187,11 +187,11 @@ public class HomePage extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new HomePage().setVisible(true);
-            }
-        });
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new HomePage().setVisible(true);
+//            }
+//        });
     }
     
     private int x;
