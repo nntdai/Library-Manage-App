@@ -6,21 +6,26 @@ package GUI;
 
 import MyDesign.ScrollBar;
 import java.awt.Color;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import BUS.BorrowCardBUS;
+import DTO.entities.BorrowCard;
 
 /**
  *
  * @author QUANG DIEN
  */
 public class ReaderHistoryNoDone_Dialog extends javax.swing.JDialog {
-
+	
     /**
      * Creates new form ReaderHistory_Dialog
      */
     public ReaderHistoryNoDone_Dialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        
         spTable.setVerticalScrollBar(new ScrollBar());
         spTable.getVerticalScrollBar().setBackground(Color.WHITE);
         spTable.getViewport().setBackground(Color.WHITE);
@@ -35,6 +40,8 @@ public class ReaderHistoryNoDone_Dialog extends javax.swing.JDialog {
         sp.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
     }
 
+    
+   
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

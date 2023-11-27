@@ -580,6 +580,9 @@
           <Font name="SansSerif" size="18" style="1"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnChoMuonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="MyDesign.MyTextField_Basic" name="txtTienCoc">
       <Properties>

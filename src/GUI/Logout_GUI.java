@@ -15,6 +15,7 @@ public class Logout_GUI extends javax.swing.JPanel {
      */
     public Logout_GUI() {
         initComponents();
+        
     }
 
     /**

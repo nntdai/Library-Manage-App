@@ -4,20 +4,186 @@
  */
 package GUI;
 
+import BUS.RoleBUS;
+import BUS.StaffBUS;
+import DTO.entities.Account;
+import DTO.entities.Role;
+import DTO.entities.Staff;
+import MyDesign.MyTable;
+import java.awt.Frame;
+import java.awt.HeadlessException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Vector;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 /**
  *
  * @author QUANG DIEN
  */
 public class StaffAdd_Dialog extends javax.swing.JDialog {
-
+    private StaffBUS staffBUS;
+    private RoleBUS roleBUS;
+    private Role role;
+    private MyDesign.MyTable tab;
+    private DefaultComboBoxModel model;    
+    private int personID;
+    private String roleID;
     /**
      * Creates new form StaffAdd_Dialog
      */
-    public StaffAdd_Dialog(java.awt.Frame parent, boolean modal) {
+    public StaffAdd_Dialog(Frame parent, boolean modal,MyDesign.MyTable tab,int userID,String role) throws IOException {
         super(parent, modal);
+        personID = userID;
+        roleID = roleID;
+        try {
+            staffBUS=new StaffBUS();
+        } catch (ClassNotFoundException | SQLException e) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null,e.getMessage());
+        }
         initComponents();
+        addRole(role);
     }
-
+    public boolean checkDataVal(String name,String tel,String address,String username,String password) throws HeadlessException, FileNotFoundException, ClassNotFoundException, IOException, SQLException {
+    	if(name.equals("")) {
+    		JOptionPane.showMessageDialog(null,"Họ và tên không được để trống");
+    		txtTen.requestFocus();
+    		return false;
+    	}
+    	String nameReg = "^[\\p{L} \\.'\\-]+$";
+    	if(!name.matches(nameReg)) {
+    		JOptionPane.showMessageDialog(null,"Họ tên không hợp lệ");
+    		txtTen.requestFocus();
+    		return false;
+    	}
+    	if(tel.equals("")) {
+    		JOptionPane.showMessageDialog(null,"Số điện thoại không được để trống");
+    		txtSoDienThoai.requestFocus();
+    		return false;
+    	}
+    	if(!staffBUS.checkTel(tel)) {
+    		JOptionPane.showMessageDialog(null,"Số điện thoại đã có trong dữ liệu");
+    		txtSoDienThoai.requestFocus();
+    		return false;
+    	}
+    	String telReg = "^0[1-9][0-9]{8}$";
+    	if(!tel.matches(telReg)) {
+    		JOptionPane.showMessageDialog(null,"Số điện thoại không hợp lệ");
+    		txtSoDienThoai.requestFocus();
+    		return false;
+    	}
+    	if(address.equals("")) {
+    		JOptionPane.showMessageDialog(null,"Địa chỉ không được để trống");
+    		txtDiaChi.requestFocus();
+    		return false;
+    	}
+    	if(username.equals("")) {
+    		JOptionPane.showMessageDialog(null,"Tên tài khoản không được để trống");
+    		txtUsername.requestFocus();
+    		return false;
+    	}
+    	if(password.equals("")) {
+    		JOptionPane.showMessageDialog(null,"Mật khẩu không được để trống");
+    		txtMatKhau.requestFocus();
+    		return false;
+    	}
+    	String clName=(String) cbChucVu.getSelectedItem();
+    	if(clName.trim().toUpperCase().equals("Chức vụ".toUpperCase())) {
+    		JOptionPane.showMessageDialog(null,"Vui lòng chọn chức vụ");
+    		return false;
+    	}
+    	return true;
+    }
+    
+    public void addDefaultAD(MyDesign.MyTable tab) throws Exception{
+    	tab.setRowCount(0);
+        Vector<Account> arr= staffBUS.getAllAD();
+        for(int i=0;i<arr.size();i++){
+            Account acc=arr.get(i);
+            int id=acc.getPersonID();
+            String name=acc.getName();
+            String tel=acc.getTel();
+            String address=acc.getAddress();
+            String username=acc.getUsername();
+            String role=acc.getRoleID();
+            Object row[] = {i+1,id,name,username,role,tel,address};
+            tab.addRow(row);
+        }
+    }
+        
+        public void addDefaultQL(MyDesign.MyTable tab) throws Exception{
+        	tab.setRowCount(0);
+            Vector<Account> arr= staffBUS.getAllQL();
+            for(int i=0;i<arr.size();i++){
+            	 Account acc=arr.get(i);
+                 int id=acc.getPersonID();
+                 String name=acc.getName();
+                 String tel=acc.getTel();
+                 String address=acc.getAddress();
+                 String username=acc.getUsername();
+                 String role=acc.getRoleID();
+                 Object row[] = {i+1,id,name,username,role,tel,address};
+                 tab.addRow(row);
+            }
+        }
+        
+        public void addRole(String role) {
+            try {
+                model = (DefaultComboBoxModel<String>) cbChucVu.getModel();
+                model.removeAllElements();
+                model.addElement("Chức vụ");
+                if(role=="QL") {
+                        model.addAll(staffBUS.getRoleQL());
+                }
+                if(role=="AD") {
+                        model.addAll(staffBUS.getRoleAD());
+                }
+            } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    JOptionPane.showMessageDialog(null,e.getMessage());
+            }
+            cbChucVu.revalidate();
+            cbChucVu.repaint();
+        }
+        
+        public void addNewRole() throws Exception {
+        	String name="";
+        	String nameReg = "^[\\p{L} \\.'\\-]+$";
+        	String id="";
+        	String idReg = "^[a-zA-Z0-9]{2}$";
+        	boolean keyName=false,keyID=false;
+        	while(!keyName) {
+                    name=JOptionPane.showInputDialog("Nhập tên vai trò mới:");
+                    if(name==null) {
+                            return;
+                    }
+                    name=name.trim();
+                    if(name.matches(nameReg) && name!="" && roleBUS.addRoleName(name)) {
+                            keyName=true;
+                            break;
+                    }
+                    JOptionPane.showMessageDialog(null,"Tên vai trò mới không hợp lệ");
+        	}
+        	while(!keyID) {
+        		id=JOptionPane.showInputDialog("Nhập mã vai trò mới:");
+        		if(id==null) {
+        			return;
+        		}
+        		id=id.trim();
+        		if(id.matches(idReg) && id!="" && roleBUS.addRoleNameID(id)) {
+        			keyID=true;
+        			break;
+        		}
+        		JOptionPane.showMessageDialog(null,"Mã vai trò mới không hợp lệ");
+        	}
+                role = new Role();
+                role.setRoleID(id);
+                role.setRoleName(name);
+        	JOptionPane.showMessageDialog(null,roleBUS.addBrandNewRole(role));
+        }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -71,6 +237,11 @@ public class StaffAdd_Dialog extends javax.swing.JDialog {
         btnThemNhanVien.setBorderColor(new java.awt.Color(22, 113, 221));
         btnThemNhanVien.setColor(new java.awt.Color(22, 113, 221));
         btnThemNhanVien.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnThemNhanVien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThemNhanVienActionPerformed(evt);
+            }
+        });
 
         jLabel22.setForeground(new java.awt.Color(127, 127, 127));
         jLabel22.setText("Thông tin cá nhân");
@@ -220,47 +391,34 @@ public class StaffAdd_Dialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnThemNhanVienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemNhanVienActionPerformed
+        try {
+            String name=txtTen.getText().trim();
+            String tel=txtSoDienThoai.getText().trim();
+            String address=txtDiaChi.getText().trim();
+            String username=txtUsername.getText().trim();
+            String password=txtMatKhau.getText();
+            String role=(String) cbChucVu.getSelectedItem();
+        try {
+            if(checkDataVal(name,tel,address,username,password)) {
+                JOptionPane.showMessageDialog(null,staffBUS.addStaff(new Staff(name,tel,address,roleID) ,new Account(username,password,role)));
+                addDefaultQL(tab);
+                dispose();
+            }
+        } catch (Exception e1) {
+                // TODO Auto-generated catch block
+                JOptionPane.showMessageDialog(null,e1.getMessage());
+        }
+        } catch (Exception e1) {
+                // TODO Auto-generated catch block
+                JOptionPane.showMessageDialog(null,e1.getMessage());
+        }
+    }//GEN-LAST:event_btnThemNhanVienActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(StaffAdd_Dialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(StaffAdd_Dialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(StaffAdd_Dialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(StaffAdd_Dialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                StaffAdd_Dialog dialog = new StaffAdd_Dialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private MyDesign.MyButton btnThemNhanVien;

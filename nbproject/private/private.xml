@@ -3,14 +3,40 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/CNTT%20K21/HK1_2023_2024/CNPM/CNPM_Library/src/GUI/Reader_GUI.java</file>
-            <file>file:/D:/CNTT%20K21/HK1_2023_2024/CNPM/CNPM_Library/src/GUI/Borrow_GUI.java</file>
-            <file>file:/D:/CNTT%20K21/HK1_2023_2024/CNPM/CNPM_Library/src/GUI/Pay_GUI.java</file>
-            <file>file:/D:/CNTT%20K21/HK1_2023_2024/CNPM/CNPM_Library/src/GUI/Statistic_GUI.java</file>
-            <file>file:/D:/CNTT%20K21/HK1_2023_2024/CNPM/CNPM_Library/src/GUI/Ticket_GUI.java</file>
-            <file>file:/D:/CNTT%20K21/HK1_2023_2024/CNPM/CNPM_Library/src/GUI/Staff_GUI.java</file>
-            <file>file:/D:/CNTT%20K21/HK1_2023_2024/CNPM/CNPM_Library/src/GUI/WareHouse_GUI.java</file>
-            <file>file:/D:/CNTT%20K21/HK1_2023_2024/CNPM/CNPM_Library/src/GUI/More_GUI.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/BUS/PayBUS.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/WareHouseAddNXB_Dialog.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/BUS/BorrowCardBUS.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/Statistic_GUI.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/BUS/DetailSupplyCardBUS.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/DAO/BookDAO.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/WareHouse_GUI.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/DAO/SupplyCardDetailDAO.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/Ticket_GUI.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/WareHouseAddReader_Dialog.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/Pay_GUI.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/DTO/entities/Book1.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/DAO/BorrowCardDAO.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/BorrowAddReader_Dialog.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/PaySearch_Dialog.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/DAO/ReaderDAO.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/DAO/SupplyCardDAO.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/WareHouseScanner_Dialog.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/WareHouseAddNCC_Dialog.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/WareHouseSearch_Dialog.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/HomePage.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/WareHouseImport_Dialog.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/BUS/PublisherBUS.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/BUS/StaffBUS.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/BUS/BookBUS.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/BUS/CategoryBUS.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/BUS/ReaderBUS.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/TicketSearch_Dialog.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/WareHouseAddTypeBook_Dialog.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/DTO/entities/BorrowCard.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/PayReport_Dialog.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/Borrow_GUI.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/GUI/ReaderAdd_Dialog.java</file>
+            <file>file:/D:/Learning/ProgramingLanguage/Java/JavaSwing/Library-Manage-App/src/BUS/SupplyCardBUS.java</file>
         </group>
     </open-files>
 </project-private>

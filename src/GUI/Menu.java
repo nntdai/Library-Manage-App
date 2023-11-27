@@ -34,7 +34,7 @@ public class Menu extends javax.swing.JPanel {
         list_Menu1.setOpaque(false);
         init();
     }
-    
+
     private void init() {
         list_Menu1.addItem(new Model_Menu("1", "Thống kê ", Model_Menu.MenuType.MENU));
         list_Menu1.addItem(new Model_Menu("2", "Cho mượn", Model_Menu.MenuType.MENU));

@@ -4,12 +4,23 @@
  */
 package GUI;
 
+import BUS.RolePermissionBUS;
+import DTO.entities.RolePermission;
+import DTO.entities.Account;
 import MyDesign.EventMenuSelected;
-import MyDesign.ScrollBar;
+
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
@@ -18,45 +29,113 @@ import javax.swing.JFrame;
  * @author QUANG DIEN
  */
 public class HomePage extends javax.swing.JFrame {
-
+    private RolePermissionBUS homePageBUS;
+    private ArrayList<RolePermission> rolePermissions = new ArrayList<>();
     /**
      * Creates new form HomePage
      */
-    public HomePage() {
+    public HomePage(Account user) throws ClassNotFoundException, SQLException, IOException {
         initComponents();
         setBackground(new Color(0,0,0,0));
         initMoving(this);
+        homePageBUS = new RolePermissionBUS();
+        try {
+            rolePermissions = homePageBUS.canAccessForm(user.getRoleID());
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Login_GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
         Menu.addEventMenuSelected(new EventMenuSelected() {
             @Override
             public void selected(int index) {
-//                System.out.println("Selected Index " + index);
-                if(index == 0){
+                if (index == 0 && hasPermission(0)) {
                     setForm(new Statistic_GUI());
-                } else if(index == 1){
-                    setForm(new Borrow_GUI());
-                } else if(index == 2){
+                } else if (index == 1 && hasPermission(1)) {
+                    try {
+                        setForm(new Borrow_GUI());
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ParseException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else if (index == 2 && hasPermission(2)) {
                     setForm(new Pay_GUI());
-                } else if(index == 3){
-                    setForm(new WareHouse_GUI());
-                } else if(index == 4){
-                    setForm(new Ticket_GUI());
-                } else if(index == 5){
-                    setForm(new Reader_GUI());
-                } else if(index == 6){
-                    setForm(new Staff_GUI());
-                } else if(index == 7){
-                    setForm(new More_GUI());
-                } else if(index == 8){
-                    setForm(new Admin_GUI());
-                } else if(index == 11){
-                    setForm(new Logout_GUI());
-                } 
+                } else if (index == 3 && hasPermission(3)) {
+                    try {
+                        setForm(new WareHouse_GUI());
+                    } catch (SQLException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else if (index == 4 && hasPermission(4)) {
+                    try {
+                        setForm(new Ticket_GUI());
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else if (index == 5 && hasPermission(5)) {
+                    try {
+                        setForm(new Reader_GUI());
+                    } catch (Exception ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else if (index == 6 && hasPermission(6)) {
+                    try {
+                        setForm(new Staff_GUI(user.getPersonID(), user.getRoleID()));
+                    } catch (Exception ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else if (index == 7 && hasPermission(7)) {
+                    try {
+                        setForm(new More_GUI());
+                    } catch (SQLException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else if (index == 8 && hasPermission(8)) {
+                    try {
+                        setForm(new Admin_GUI());
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (NoSuchAlgorithmException ex) {
+                        Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else if (index == 11) {
+                    System.exit(0);
+                }
+            }
+
+            private void setVisible(boolean b) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
             }
         });
-        //set when system open with home page
         setForm(new Statistic_GUI());
+
     }
-    
+    private boolean hasPermission(int permission) {
+        for (RolePermission rolePermission : rolePermissions) {
+            if (permission == rolePermission.getPermissionID() ) {
+                return true;
+            }
+        }
+        return false;
+    }   
+  
     private void setForm(JComponent com) {
         mainPanel.removeAll();
         mainPanel.add(com);
@@ -123,6 +202,11 @@ public class HomePage extends javax.swing.JFrame {
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
+        mainPanel.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                mainPanelKeyPressed(evt);
+            }
+        });
         mainPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout panelBorder1Layout = new javax.swing.GroupLayout(panelBorder1);
@@ -159,6 +243,17 @@ public class HomePage extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void mainPanelKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_mainPanelKeyPressed
+        int keyCode = evt.getKeyCode();
+        int modifiers = evt.getModifiers();
+
+        if ((keyCode == KeyEvent.VK_F4 && modifiers == KeyEvent.ALT_MASK) ||
+            keyCode == KeyEvent.VK_ESCAPE) {
+            // Exit the program
+            System.exit(0);
+        }
+    }//GEN-LAST:event_mainPanelKeyPressed
+
     /**
      * @param args the command line arguments
      */
@@ -189,7 +284,15 @@ public class HomePage extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new HomePage().setVisible(true);
+                try {
+                    new HomePage(new Account()).setVisible(true);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(HomePage.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

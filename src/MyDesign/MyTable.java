@@ -46,4 +46,9 @@ public class MyTable extends JTable{
         DefaultTableModel model = (DefaultTableModel) getModel();
         model.addRow(row);
     }
+    public void setRowCount(int i) {
+        // TODO Auto-generated method stub
+        DefaultTableModel model = (DefaultTableModel) getModel();
+        model.setRowCount(i);
+    }
 }

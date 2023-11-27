@@ -144,6 +144,9 @@
         <Component class="GUI.Menu" name="Menu">
         </Component>
         <Container class="MyDesign.PanelBorder_Basic" name="mainPanel">
+          <Events>
+            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="mainPanelKeyPressed"/>
+          </Events>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
         </Container>

@@ -8,26 +8,90 @@ import MyDesign.ScrollBar;
 import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
+import BUS.ReaderBUS;
+import DTO.entities.Reader;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Vector;
+import javax.swing.JOptionPane;
 /**
  *
  * @author QUANG DIEN
  */
 public class Reader_GUI extends javax.swing.JPanel {
-
+    ReaderBUS readerBUS;
     /**
      * Creates new form Reader_GUI
      */
-    public Reader_GUI() {
+    public Reader_GUI() throws Exception {
         initComponents();
         spTable.setVerticalScrollBar(new ScrollBar());
         spTable.getVerticalScrollBar().setBackground(Color.WHITE);
         spTable.getViewport().setBackground(Color.WHITE);
         JPanel p = new JPanel();
+        try{
+            readerBUS=new ReaderBUS();
+            readerBUS.updateFineDate();
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(null,ex.getMessage());
+        }
+        addDefault();
         p.setBackground(Color.WHITE);
         spTable.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
     }
-
+    public void addDefault() throws Exception{
+        Vector<Reader> arr= readerBUS.getAll();
+        for(int i=0;i<arr.size();i++){
+            Reader acc=arr.get(i);
+            int id=acc.getPersonID();
+            String name=acc.getName();
+            String tel=acc.getTel();
+            String address=acc.getAddress();
+            LocalDate fineDate=acc.getFineDate();
+            Integer isLocked=acc.getStatus();
+            String isL="Mở";
+            if(isLocked == 1){
+                isL="Khoá";
+            }
+            long daysBetween=0; 
+            if(fineDate!=null) {
+	            LocalDate cuDate=LocalDate.now();
+	            daysBetween = ChronoUnit.DAYS.between(cuDate, fineDate);
+            }        
+            Object row[] = {i+1,id,name,tel,address,daysBetween,isL};
+            tbDanhSachDocGia.addRow(row);
+        }
+    }
+    
+    public void findVal(String str) throws Exception {
+    	Vector<Reader> arr=readerBUS.allOutSearch(str);
+    	if(arr.size()==0) {
+    		JOptionPane.showMessageDialog(null,"Không tìm thấy độc giả theo yêu cầu");
+    		return;
+    	}
+    	tbDanhSachDocGia.setRowCount(0);
+    	for(int i=0;i<arr.size();i++){
+            Reader acc=arr.get(i);
+            int id=acc.getPersonID();
+            String name=acc.getName();
+            String tel=acc.getTel();
+            String address=acc.getAddress();
+            LocalDate fineDate=acc.getFineDate();
+            Integer isLocked=acc.getStatus();
+            String isL="Mở";
+            if(isLocked == 1){
+                isL="Khoá";
+            }
+            long daysBetween=0; 
+            if(fineDate!=null) {
+	            LocalDate cuDate=LocalDate.now();
+	            daysBetween = ChronoUnit.DAYS.between(cuDate, fineDate);
+            }        
+            Object row[] = {i+1,id,name,tel,address,daysBetween,isL};
+            tbDanhSachDocGia.addRow(row);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -70,9 +134,20 @@ public class Reader_GUI extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tbDanhSachDocGia.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbDanhSachDocGiaMouseClicked(evt);
+            }
+        });
         spTable.setViewportView(tbDanhSachDocGia);
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/search.png"))); // NOI18N
+
+        txtTimKiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTimKiemActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelBorder_Basic1Layout = new javax.swing.GroupLayout(panelBorder_Basic1);
         panelBorder_Basic1.setLayout(panelBorder_Basic1Layout);
@@ -107,6 +182,11 @@ public class Reader_GUI extends javax.swing.JPanel {
         btnDocGiaMoi.setColorClick(new java.awt.Color(153, 204, 255));
         btnDocGiaMoi.setColorOver(new java.awt.Color(22, 113, 221));
         btnDocGiaMoi.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        btnDocGiaMoi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDocGiaMoiActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelBorder1Layout = new javax.swing.GroupLayout(panelBorder1);
         panelBorder1.setLayout(panelBorder1Layout);
@@ -155,6 +235,41 @@ public class Reader_GUI extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void tbDanhSachDocGiaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDanhSachDocGiaMouseClicked
+        if (evt.getClickCount() == 2) {
+            int row = tbDanhSachDocGia.getSelectedRow();
+            if (row >= 0) {
+                String cellValue = tbDanhSachDocGia.getValueAt(row, 1).toString();
+                int cellVal=Integer.parseInt(cellValue);
+                try {
+                        ReaderUpdateInfor_Dialog ruid=new ReaderUpdateInfor_Dialog(new javax.swing.JFrame(), true,cellVal,tbDanhSachDocGia);
+                        ruid.setVisible(true);
+                }catch(Exception ex) {
+                        JOptionPane.showMessageDialog(null,ex.getMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_tbDanhSachDocGiaMouseClicked
+
+    private void txtTimKiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTimKiemActionPerformed
+        String text = txtTimKiem.getText().trim();
+        try {
+            findVal(text);
+        } catch (Exception e1) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null,e1.getMessage());
+        }
+    }//GEN-LAST:event_txtTimKiemActionPerformed
+
+    private void btnDocGiaMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDocGiaMoiActionPerformed
+        try {
+            ReaderAdd_Dialog rad=new ReaderAdd_Dialog(new javax.swing.JFrame(), true,tbDanhSachDocGia);
+            rad.setVisible(true);
+        }catch(Exception ex) {
+                JOptionPane.showMessageDialog(null,ex.getMessage());
+        }
+    }//GEN-LAST:event_btnDocGiaMoiActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

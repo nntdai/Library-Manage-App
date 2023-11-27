@@ -4,18 +4,31 @@
  */
 package GUI;
 
+import BUS.AccountBUS;
+import DTO.entities.Account;
 import java.awt.Color;
+import MyDesign.Login;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author QUANG DIEN
  */
 public class Login_GUI extends javax.swing.JFrame {
-
+    private AccountBUS userBUS;
+    private Account user;
+    private String username = "";
+    private String pwd = "";
     /**
      * Creates new form Login_GUI
      */
-    public Login_GUI() {
+    public Login_GUI() throws ClassNotFoundException, SQLException, IOException{
+        this.user = new Account();
+        this.userBUS = new AccountBUS();
         initComponents();
         setBackground(new Color(0,0,0,0));
     }
@@ -38,8 +51,6 @@ public class Login_GUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
-
-        backgroundLogin.setBlur(panel);
 
         panel.setOpaque(false);
 
@@ -120,8 +131,29 @@ public class Login_GUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-        String userName = txtUserName.getText();
-        String password = String.valueOf(txtPassword.getPassword());
+        String username = txtUserName.getText();
+        String pwd = String.valueOf(txtPassword.getPassword());
+        user = new Account();
+        user.setUsername(username);
+        user.setPwd(pwd);     
+        try {   
+            user = userBUS.signIn(user);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Login_GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        this.setVisible(false);
+        HomePage homePage = null;
+        try {
+            homePage = new HomePage(user);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Login_GUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Login_GUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Login_GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        homePage.setVisible(true);
     }//GEN-LAST:event_btnLoginActionPerformed
 
     /**
@@ -154,7 +186,15 @@ public class Login_GUI extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Login_GUI().setVisible(true);
+                try {
+                    new Login_GUI().setVisible(true);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Login_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Login_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(Login_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

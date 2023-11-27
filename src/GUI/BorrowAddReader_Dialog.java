@@ -4,28 +4,39 @@
  */
 package GUI;
 
+import BUS.ReaderBUS;
 import MyDesign.ScrollBar;
 import java.awt.Color;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author QUANG DIEN
  */
 public class BorrowAddReader_Dialog extends javax.swing.JDialog {
-
+   ReaderBUS readerBLL;
     /**
      * Creates new form AddReaderBorrow_Dialog
      */
-    public BorrowAddReader_Dialog(java.awt.Frame parent, boolean modal) {
+    public BorrowAddReader_Dialog(java.awt.Frame parent, boolean modal) throws ClassNotFoundException, SQLException {
         super(parent, modal);
+        readerBLL= new ReaderBUS();
         initComponents();
+        tbDocGia.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        showAvalableReader();
         spTable.setVerticalScrollBar(new ScrollBar());
         spTable.getVerticalScrollBar().setBackground(Color.WHITE);
         spTable.getViewport().setBackground(Color.WHITE);
         JPanel p = new JPanel();
         p.setBackground(Color.WHITE);
     }
+   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -39,25 +50,34 @@ public class BorrowAddReader_Dialog extends javax.swing.JDialog {
         panelBorder_Statistic_Blue1 = new MyDesign.PanelBorder_Statistic_Blue();
         panelBorder_Basic1 = new MyDesign.PanelBorder_Basic();
         txtDocGia = new MyDesign.MyTextField_Basic();
-        btnChonDocGia = new MyDesign.MyButton();
+        try {
+            btnChonDocGia =(MyDesign.MyButton)java.beans.Beans.instantiate(getClass().getClassLoader(), "GUI.BorrowAddReader_Dialog_btnChonDocGia");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
         spTable = new javax.swing.JScrollPane();
         tbDocGia = new MyDesign.MyTable();
-        jLabel3 = new javax.swing.JLabel();
+        try {
+            jLabel3 =(javax.swing.JLabel)java.beans.Beans.instantiate(getClass().getClassLoader(), "GUI.BorrowAddReader_Dialog_jLabel3");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         txtDocGia.setBackground(new java.awt.Color(229, 229, 229));
         txtDocGia.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         txtDocGia.setPreferredSize(new java.awt.Dimension(188, 36));
+        txtDocGia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtDocGiaActionPerformed(evt);
+            }
+        });
 
-        btnChonDocGia.setBackground(new java.awt.Color(22, 113, 221));
-        btnChonDocGia.setForeground(new java.awt.Color(255, 255, 255));
-        btnChonDocGia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/search-white.png"))); // NOI18N
-        btnChonDocGia.setText("Chọn độc giả");
-        btnChonDocGia.setToolTipText("");
-        btnChonDocGia.setBorderColor(new java.awt.Color(22, 113, 221));
-        btnChonDocGia.setColor(new java.awt.Color(22, 113, 221));
-        btnChonDocGia.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnChonDocGia.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnChonDocGiaActionPerformed(evt);
@@ -89,13 +109,16 @@ public class BorrowAddReader_Dialog extends javax.swing.JDialog {
         panelBorder_Basic1Layout.setHorizontalGroup(
             panelBorder_Basic1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBorder_Basic1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(panelBorder_Basic1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnChonDocGia, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(panelBorder_Basic1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(txtDocGia, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
-                        .addComponent(spTable, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                .addGap(0, 19, Short.MAX_VALUE))
+                .addGroup(panelBorder_Basic1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelBorder_Basic1Layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addGroup(panelBorder_Basic1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtDocGia, javax.swing.GroupLayout.PREFERRED_SIZE, 418, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(spTable, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panelBorder_Basic1Layout.createSequentialGroup()
+                        .addGap(69, 69, 69)
+                        .addComponent(btnChonDocGia, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         panelBorder_Basic1Layout.setVerticalGroup(
             panelBorder_Basic1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -104,16 +127,10 @@ public class BorrowAddReader_Dialog extends javax.swing.JDialog {
                 .addComponent(txtDocGia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(spTable, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(btnChonDocGia, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/search-white.png"))); // NOI18N
-        jLabel3.setText("Độc giả");
 
         javax.swing.GroupLayout panelBorder_Statistic_Blue1Layout = new javax.swing.GroupLayout(panelBorder_Statistic_Blue1);
         panelBorder_Statistic_Blue1.setLayout(panelBorder_Statistic_Blue1Layout);
@@ -151,9 +168,51 @@ public class BorrowAddReader_Dialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnChonDocGiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChonDocGiaActionPerformed
-        // TODO add your handling code here:
+      int i=tbDocGia.getSelectedRow();
+      if (i>=0)
+      {
+          dispose();
+      }
+      else
+      {
+          JOptionPane.showMessageDialog(null, "Vui lòng chọn độc giả !");
+      }
+        
     }//GEN-LAST:event_btnChonDocGiaActionPerformed
 
+    private void txtDocGiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDocGiaActionPerformed
+        String name =txtDocGia.getText().trim();
+        ((DefaultTableModel)tbDocGia.getModel()).setRowCount(0);
+       try {
+           for (int i=0;i<readerBLL.getReaderByName(name).size();i++)
+           {
+               tbDocGia.addRow(new Object[]{i+1, readerBLL.getReaderByName(name).get(i).
+                       getPersonID(),readerBLL.getReaderByName(name).get(i).getName()});
+           }  } catch (ClassNotFoundException ex) {
+           Logger.getLogger(BorrowAddReader_Dialog.class.getName()).log(Level.SEVERE, null, ex);
+       } catch (SQLException ex) {
+           Logger.getLogger(BorrowAddReader_Dialog.class.getName()).log(Level.SEVERE, null, ex);
+       }
+    }//GEN-LAST:event_txtDocGiaActionPerformed
+ public String getNameReader()
+ {
+     int i = tbDocGia.getSelectedRow();
+     return tbDocGia.getValueAt(i,2 ).toString();
+ }
+ public int getIDDocGia()
+ {
+     int i = tbDocGia.getSelectedRow();
+     int idDocGia = Integer.parseInt(tbDocGia.getValueAt(i,1).toString());
+     return idDocGia;
+ }
+    private void showAvalableReader() throws ClassNotFoundException, SQLException
+{
+    
+    for (int i=0;i<readerBLL.getAll().size();i++)
+    {
+        tbDocGia.addRow(new Object[]{i+1, readerBLL.getAll().get(i).getPersonID(),readerBLL.getAll().get(i).getName()});
+    }
+}
     /**
      * @param args the command line arguments
      */
@@ -185,7 +244,14 @@ public class BorrowAddReader_Dialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                BorrowAddReader_Dialog dialog = new BorrowAddReader_Dialog(new javax.swing.JFrame(), true);
+                BorrowAddReader_Dialog dialog = null;
+                try {
+                    dialog = new BorrowAddReader_Dialog(new javax.swing.JFrame(), true);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(BorrowAddReader_Dialog.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(BorrowAddReader_Dialog.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

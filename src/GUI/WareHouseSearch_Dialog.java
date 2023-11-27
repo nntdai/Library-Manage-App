@@ -3,19 +3,50 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
 package GUI;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.GroupLayout;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.table.DefaultTableModel;
 
+import DAO.SupplyCardDAO;
+import DTO.entities.SupplyCardWithStaff;
+import connection.ConnectDB;
+
+import javax.swing.JLabel;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JTextField;
 /**
  *
  * @author QUANG DIEN
  */
 public class WareHouseSearch_Dialog extends javax.swing.JDialog {
-
+    ConnectDB connectDB;
+    SupplyCardDAO supplyCardWithStaffDAO;
+    WareHouse_GUI whg;
+//    DefaultTableModel model = (DefaultTableModel) whg.tbLichSuNhapHang.getModel();
     /**
      * Creates new form SearchBorrow_Dialog
      */
-    public WareHouseSearch_Dialog(java.awt.Frame parent, boolean modal) {
+    public WareHouseSearch_Dialog(java.awt.Frame parent, boolean modal) throws SQLException, IOException, ClassNotFoundException {
         super(parent, modal);
-        initComponents();
+        this.whg = new WareHouse_GUI();
+        try {
+            this.supplyCardWithStaffDAO = new SupplyCardDAO(connectDB);
+            initComponents();
+        } catch (IOException ex) {
+            Logger.getLogger(WareHouseSearch_Dialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -28,128 +59,23 @@ public class WareHouseSearch_Dialog extends javax.swing.JDialog {
     private void initComponents() {
 
         btnGroup = new javax.swing.ButtonGroup();
-        panelBorder_Statistic_Blue1 = new MyDesign.PanelBorder_Statistic_Blue();
-        panelBorder_Basic1 = new MyDesign.PanelBorder_Basic();
-        rbNgayNhap = new javax.swing.JRadioButton();
-        rbNhaCungCap = new javax.swing.JRadioButton();
-        rbThuKho = new javax.swing.JRadioButton();
-        txtTimKiem = new MyDesign.MyTextField_Basic();
-        btnTimKiem = new MyDesign.MyButton();
-        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        btnGroup.add(rbNgayNhap);
-        rbNgayNhap.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        rbNgayNhap.setText("Ngày nhập");
-
-        btnGroup.add(rbNhaCungCap);
-        rbNhaCungCap.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        rbNhaCungCap.setText("Nhà cung cấp");
-
-        btnGroup.add(rbThuKho);
-        rbThuKho.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        rbThuKho.setText("Thủ kho");
-        rbThuKho.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbThuKhoActionPerformed(evt);
-            }
-        });
-
-        txtTimKiem.setBackground(new java.awt.Color(229, 229, 229));
-        txtTimKiem.setPreferredSize(new java.awt.Dimension(188, 36));
-
-        btnTimKiem.setBackground(new java.awt.Color(22, 113, 221));
-        btnTimKiem.setForeground(new java.awt.Color(255, 255, 255));
-        btnTimKiem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/search-white.png"))); // NOI18N
-        btnTimKiem.setText("Tìm kiếm");
-        btnTimKiem.setToolTipText("");
-        btnTimKiem.setBorderColor(new java.awt.Color(22, 113, 221));
-        btnTimKiem.setColor(new java.awt.Color(22, 113, 221));
-        btnTimKiem.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-
-        javax.swing.GroupLayout panelBorder_Basic1Layout = new javax.swing.GroupLayout(panelBorder_Basic1);
-        panelBorder_Basic1.setLayout(panelBorder_Basic1Layout);
-        panelBorder_Basic1Layout.setHorizontalGroup(
-            panelBorder_Basic1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBorder_Basic1Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addGroup(panelBorder_Basic1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelBorder_Basic1Layout.createSequentialGroup()
-                        .addComponent(rbThuKho)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(panelBorder_Basic1Layout.createSequentialGroup()
-                        .addComponent(rbNgayNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(rbNhaCungCap)
-                        .addGap(35, 35, 35))
-                    .addGroup(panelBorder_Basic1Layout.createSequentialGroup()
-                        .addComponent(txtTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(12, Short.MAX_VALUE))))
-        );
-        panelBorder_Basic1Layout.setVerticalGroup(
-            panelBorder_Basic1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBorder_Basic1Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(panelBorder_Basic1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rbNgayNhap)
-                    .addComponent(rbNhaCungCap))
-                .addGap(18, 18, 18)
-                .addComponent(rbThuKho)
-                .addGap(20, 20, 20)
-                .addGroup(panelBorder_Basic1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnTimKiem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtTimKiem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(10, Short.MAX_VALUE))
-        );
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/search-white.png"))); // NOI18N
-        jLabel3.setText("Tìm kiếm");
-
-        javax.swing.GroupLayout panelBorder_Statistic_Blue1Layout = new javax.swing.GroupLayout(panelBorder_Statistic_Blue1);
-        panelBorder_Statistic_Blue1.setLayout(panelBorder_Statistic_Blue1Layout);
-        panelBorder_Statistic_Blue1Layout.setHorizontalGroup(
-            panelBorder_Statistic_Blue1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBorder_Statistic_Blue1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelBorder_Statistic_Blue1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelBorder_Basic1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        panelBorder_Statistic_Blue1Layout.setVerticalGroup(
-            panelBorder_Statistic_Blue1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBorder_Statistic_Blue1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelBorder_Basic1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelBorder_Statistic_Blue1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(0, 548, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelBorder_Statistic_Blue1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(0, 369, Short.MAX_VALUE)
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void rbThuKhoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbThuKhoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rbThuKhoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -184,27 +110,34 @@ public class WareHouseSearch_Dialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                WareHouseSearch_Dialog dialog = new WareHouseSearch_Dialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
+                try {
+                    WareHouseSearch_Dialog dialog = new WareHouseSearch_Dialog(new javax.swing.JFrame(), true);
+                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                        @Override
+                        public void windowClosing(java.awt.event.WindowEvent e) {
+                            System.exit(0);
+                        }
+                    });
+                    dialog.setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(WareHouseSearch_Dialog.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(WareHouseSearch_Dialog.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(WareHouseSearch_Dialog.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
-
+    
+    public static boolean isNumeric(String str) {
+        return str.matches("-?\\d+(\\.\\d+)?");
+    }
+    public static boolean isAlpha(String str) {
+        return str.matches("[a-zA-Z]+");
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup btnGroup;
-    private MyDesign.MyButton btnTimKiem;
-    private javax.swing.JLabel jLabel3;
-    private MyDesign.PanelBorder_Basic panelBorder_Basic1;
-    private MyDesign.PanelBorder_Statistic_Blue panelBorder_Statistic_Blue1;
-    private javax.swing.JRadioButton rbNgayNhap;
-    private javax.swing.JRadioButton rbNhaCungCap;
-    private javax.swing.JRadioButton rbThuKho;
-    private MyDesign.MyTextField_Basic txtTimKiem;
     // End of variables declaration//GEN-END:variables
 }

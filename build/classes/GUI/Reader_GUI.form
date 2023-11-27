@@ -158,6 +158,9 @@
                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tbDanhSachDocGiaMouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -200,6 +203,9 @@
               </Properties>
             </Component>
             <Component class="MyDesign.SearchText" name="txtTimKiem">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtTimKiemActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -232,6 +238,9 @@
               <Font name="SansSerif" size="12" style="1"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDocGiaMoiActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

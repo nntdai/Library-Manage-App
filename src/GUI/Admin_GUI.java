@@ -4,22 +4,50 @@
  */
 package GUI;
 
+import BUS.PermissionBUS;
+import BUS.RoleBUS;
+import BUS.RolePermissionBUS;
+import DTO.entities.Permission;
+import DTO.entities.Role;
+import DTO.entities.RolePermission;
 import MyDesign.ScrollBar;
 import java.awt.Color;
+import java.util.ArrayList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.table.DefaultTableModel;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author QUANG DIEN
  */
 public class Admin_GUI extends javax.swing.JPanel {
+    private Role role;
+    private RoleBUS roleBUS;
+    private Permission perrmission;
+    private PermissionBUS permissionBUS;
+    private RolePermission rolePermission;
+    private RolePermissionBUS rolePermissionBUS;
+    private ArrayList<Role> listRole;
+    private ArrayList<Permission> listPermisson;
+    private DefaultTableModel rolesModel;    
+    private DefaultTableModel permissionsModel;
 
     /**
      * Creates new form Admin_GUI
      */
-    public Admin_GUI() {
+    public Admin_GUI() throws ClassNotFoundException, SQLException, IOException, NoSuchAlgorithmException {
         initComponents();
+        styles();
+        initTableRoles();
+    }
+    public void styles(){
         spTable.setVerticalScrollBar(new ScrollBar());
         spTable.getVerticalScrollBar().setBackground(Color.WHITE);
         spTable.getViewport().setBackground(Color.WHITE);
@@ -32,6 +60,40 @@ public class Admin_GUI extends javax.swing.JPanel {
         spTable1.getViewport().setBackground(Color.WHITE);
         p.setBackground(Color.WHITE);
         spTable1.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
+    }
+    public void initTableRoles() throws ClassNotFoundException, SQLException, IOException, NoSuchAlgorithmException{
+        roleBUS = new RoleBUS();
+        listRole = roleBUS.getList();
+        rolesModel = (DefaultTableModel) tbChucVu.getModel();
+        int stt = 1;
+        String roleID, roleName;
+        for (Role role : listRole){
+            roleID = role.getRoleID();
+            roleName = role.getRoleName();
+            rolesModel.addRow(new Object[]{stt++,roleName,roleID});
+        }
+        if (!listRole.isEmpty()) {
+            Role firstRole = listRole.get(0);
+            String firstRoleName = firstRole.getRoleName();
+            initTablePermission(firstRoleName); // Initialize the permission table with the first role
+        }
+    }
+    public void initTablePermission(String roleNameSelected) throws ClassNotFoundException, SQLException, IOException, NoSuchAlgorithmException{
+        permissionBUS = new PermissionBUS();
+        listPermisson = permissionBUS.getList();
+        rolePermissionBUS = new RolePermissionBUS();
+        permissionsModel = (DefaultTableModel) tbTinhNang.getModel();
+        permissionsModel.setRowCount(0);
+        txtTenChucVu.setText(roleNameSelected); 
+        int stt = 1;
+        int permissionID;
+        String permissionName;
+        for (Permission permission : listPermisson){
+            permissionID = permission.getPermissionID();
+            permissionName = permission.getPermissionName();
+            boolean permissionCheck = rolePermissionBUS.hasPermission(roleNameSelected,permissionID);
+            permissionsModel.addRow(new Object[]{stt++,permissionName, permissionCheck});
+        }
     }
 
     /**
@@ -84,7 +146,16 @@ public class Admin_GUI extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tbChucVu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbChucVuMouseClicked(evt);
+            }
+        });
         spTable.setViewportView(tbChucVu);
+        if (tbChucVu.getColumnModel().getColumnCount() > 0) {
+            tbChucVu.getColumnModel().getColumn(0).setMinWidth(50);
+            tbChucVu.getColumnModel().getColumn(0).setMaxWidth(70);
+        }
 
         javax.swing.GroupLayout panelBorder1Layout = new javax.swing.GroupLayout(panelBorder1);
         panelBorder1.setLayout(panelBorder1Layout);
@@ -136,15 +207,26 @@ public class Admin_GUI extends javax.swing.JPanel {
                 "STT", "Tính năng", "Được phép"
             }
         ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
         spTable1.setViewportView(tbTinhNang);
+        if (tbTinhNang.getColumnModel().getColumnCount() > 0) {
+            tbTinhNang.getColumnModel().getColumn(0).setMinWidth(40);
+            tbTinhNang.getColumnModel().getColumn(0).setMaxWidth(50);
+        }
 
         btnXoaChucVu.setBackground(new java.awt.Color(255, 241, 241));
         btnXoaChucVu.setForeground(new java.awt.Color(248, 67, 67));
@@ -154,6 +236,11 @@ public class Admin_GUI extends javax.swing.JPanel {
         btnXoaChucVu.setColor(new java.awt.Color(255, 241, 241));
         btnXoaChucVu.setColorOver(new java.awt.Color(255, 241, 241));
         btnXoaChucVu.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnXoaChucVu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXoaChucVuActionPerformed(evt);
+            }
+        });
 
         btnCapNhat.setBackground(new java.awt.Color(22, 113, 221));
         btnCapNhat.setForeground(new java.awt.Color(255, 255, 255));
@@ -162,6 +249,11 @@ public class Admin_GUI extends javax.swing.JPanel {
         btnCapNhat.setBorderColor(new java.awt.Color(22, 113, 221));
         btnCapNhat.setColor(new java.awt.Color(22, 113, 221));
         btnCapNhat.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnCapNhat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCapNhatActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelBorder2Layout = new javax.swing.GroupLayout(panelBorder2);
         panelBorder2.setLayout(panelBorder2Layout);
@@ -255,6 +347,56 @@ public class Admin_GUI extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void tbChucVuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbChucVuMouseClicked
+        int selectedRow = tbChucVu.getSelectedRow();
+        if (selectedRow != -1) {
+            String value = (String) tbChucVu.getValueAt(selectedRow, 1); // Replace 0 with the desired column index
+            try {
+                initTablePermission(value);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Admin_GUI.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(Admin_GUI.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Admin_GUI.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NoSuchAlgorithmException ex) {
+                Logger.getLogger(Admin_GUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_tbChucVuMouseClicked
+
+    private void btnCapNhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapNhatActionPerformed
+        int rowCount = tbTinhNang.getRowCount();
+        int columnCount = tbTinhNang.getColumnCount()-1;
+        List<List<Object>> dataList = new ArrayList<>();
+        for (int row = 0; row < rowCount; row++) {
+            boolean checkValue = (boolean) tbTinhNang.getValueAt(row, 2);
+            if(checkValue){
+                List<Object> rowData = new ArrayList<>();
+                for (int column = 0; column < columnCount; column++) {
+                    Object cellValue = tbTinhNang.getValueAt(row, column);
+                    System.out.println(cellValue);
+                    rowData.add(cellValue);
+                }
+                dataList.add(rowData);
+            }
+        }
+        try {
+            rolePermissionBUS = new RolePermissionBUS();
+            rolePermissionBUS.updateRolePermissions(dataList, txtTenChucVu.getText());
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Admin_GUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Admin_GUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Admin_GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnCapNhatActionPerformed
+
+    private void btnXoaChucVuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaChucVuActionPerformed
+        
+    }//GEN-LAST:event_btnXoaChucVuActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

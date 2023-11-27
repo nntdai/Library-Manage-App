@@ -4,17 +4,35 @@
  */
 package GUI;
 
+import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+
+import BUS.AuthorBUS;
+import DTO.entities.Author;
+
+
 /**
  *
  * @author QUANG DIEN
  */
 public class WareHouseAddReader_Dialog extends javax.swing.JDialog {
-
+    String nameFrame;
     /**
      * Creates new form WareHouseAddReader_Dialog
+     * @throws IOException
+     * @throws SQLException
+     * @throws ClassNotFoundException
      */
-    public WareHouseAddReader_Dialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public WareHouseAddReader_Dialog(java.awt.Frame parent,String nameFrame ,boolean modal) throws ClassNotFoundException, SQLException, IOException {
+        super(parent,nameFrame, modal);
+        this.nameFrame = nameFrame;
+        setLocationRelativeTo(null);
         initComponents();
     }
 
@@ -25,7 +43,7 @@ public class WareHouseAddReader_Dialog extends javax.swing.JDialog {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents() throws SQLException, IOException, ClassNotFoundException{
 
         panelBorder_Statistic_Blue1 = new MyDesign.PanelBorder_Statistic_Blue();
         panelBorder_Basic1 = new MyDesign.PanelBorder_Basic();
@@ -48,7 +66,79 @@ public class WareHouseAddReader_Dialog extends javax.swing.JDialog {
         btnThemTacGia.setBorderColor(new java.awt.Color(22, 113, 221));
         btnThemTacGia.setColor(new java.awt.Color(22, 113, 221));
         btnThemTacGia.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        
+        btnThemTacGia.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (txtTenTacGia.getText().equals("")) {
+                    JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Vui lòng điền đầy đủ thông tin.", "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
+                } else {
+                	Author a = new Author();
+                    a.setName(txtTenTacGia.getText());
+                    if (nameFrame == "more_gui") {
+                        System.out.print("More_GUI");
+                        More_GUI gui;
+                        try {
+                            gui = new More_GUI();
+                            if(au.getByNameAuthor(a.getName())!=null)
+                            {
+                                JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Tên Tác Giả đã tồn tại!","Thông báo",JOptionPane.WARNING_MESSAGE);
+                            }
+                            else {
+                                au.saveInfo(a);
+                                JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Thêm Thành Công!", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);                                
+                                gui.initTableAuthor();
+                                hide();
+                                gui.setVisible(true);
+                                
+                            }
+                        } catch (SQLException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        } catch (IOException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        }
+                    }
+                    else {
+                        WareHouseImport_Dialog whid;
+                        try{
+                            whid = new WareHouseImport_Dialog(null, rootPaneCheckingEnabled);
+                            if(au.getByNameAuthor(a.getName())!=null)
+                            {
+                                JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Tên Tác Giả đã tồn tại!","Thông báo",JOptionPane.WARNING_MESSAGE);
+                            }
+                            else {
+                                au.saveInfo(a);
+                                JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Thêm Thành Công!", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+                                List<Author> authorList = au.getAllName();
+                                whid.cbTacGia.removeAllItems();
+                                for(Author item : authorList)
+                                {
+                                    whid.cbTacGia.addItem(item.getName());
+                                }
+                                hide();
+                                whid.setVisible(true);
+                                
+                            }
+                        } catch (ClassNotFoundException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        } catch (SQLException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        } catch (IOException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        }
+                    }
+                    
+                    
+                }
+            }
+        });
 
+        
         javax.swing.GroupLayout panelBorder_Basic1Layout = new javax.swing.GroupLayout(panelBorder_Basic1);
         panelBorder_Basic1.setLayout(panelBorder_Basic1Layout);
         panelBorder_Basic1Layout.setHorizontalGroup(
@@ -115,7 +205,7 @@ public class WareHouseAddReader_Dialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
     /**
      * @param args the command line arguments
      */
@@ -146,14 +236,30 @@ public class WareHouseAddReader_Dialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                WareHouseAddReader_Dialog dialog = new WareHouseAddReader_Dialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
+                WareHouseAddReader_Dialog dialog;
+                try {
+                    dialog = new WareHouseAddReader_Dialog(new javax.swing.JFrame(), null ,true);
+                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                        @Override
+                        public void windowClosing(java.awt.event.WindowEvent e) {
+                            System.exit(0);
+                        }
+                    });
+                    dialog.setVisible(true);
+                } catch (HeadlessException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+               
             }
         });
     }
@@ -165,5 +271,6 @@ public class WareHouseAddReader_Dialog extends javax.swing.JDialog {
     private MyDesign.PanelBorder_Basic panelBorder_Basic1;
     private MyDesign.PanelBorder_Statistic_Blue panelBorder_Statistic_Blue1;
     private MyDesign.MyTextField_Basic txtTenTacGia;
+    private AuthorBUS au = new AuthorBUS();
     // End of variables declaration//GEN-END:variables
 }

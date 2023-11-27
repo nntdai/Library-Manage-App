@@ -4,30 +4,118 @@
  */
 package GUI;
 
+import BUS.AccountBUS;
 import MyDesign.ScrollBar;
 import java.awt.Color;
+import java.util.Vector;
+
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import BUS.StaffBUS;
+import DTO.entities.Staff;
+import DTO.entities.Account;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author QUANG DIEN
  */
 public class Staff_GUI extends javax.swing.JPanel {
-
+    private StaffBUS staffBUS;
+    int userID;
+    String roleID;
     /**
      * Creates new form Staff_GUI
      */
-    public Staff_GUI() {
+
+    public Staff_GUI(int userID,String roleID) throws Exception {
         initComponents();
+        this.userID = userID;
+        this.roleID = roleID;
+        System.out.println(this.userID);        
+        System.out.println(this.roleID);
+
         spTable.setVerticalScrollBar(new ScrollBar());
         spTable.getVerticalScrollBar().setBackground(Color.WHITE);
         spTable.getViewport().setBackground(Color.WHITE);
+        try{
+            staffBUS =new StaffBUS();
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(null,ex.getMessage());
+        }
+        if(this.roleID.equals("AD")) {
+            
+            addDefaultAD();
+        }
+        System.out.println("end");
+        if(this.roleID.equals("QL")) {
+                addDefaultQL();
+        }
         JPanel p = new JPanel();
         p.setBackground(Color.WHITE);
         spTable.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
     }
-
+    
+    public void addDefaultAD() throws Exception{
+        Vector<Account> arr = staffBUS.getAllAD();
+        System.out.println(arr);
+        for(int i=0;i<arr.size();i++){
+            Account acc = arr.get(i);
+            int id=acc.getPersonID();
+            String name=acc.getName();
+            String tel=acc.getTel();
+            String address=acc.getAddress();
+            String username=acc.getUsername();
+            String role=acc.getRoleID();
+            Object row[] = {i+1,id,name,username,role,tel,address};
+            tbDanhSachNhanVien.addRow(row);
+        }
+    }
+    
+    public void addDefaultQL() throws Exception{
+        Vector<Account> arr= staffBUS.getAllQL();
+        for(int i=0;i<arr.size();i++){
+            Account acc=arr.get(i);
+            int id=acc.getPersonID();
+            String name=acc.getName();
+            String tel=acc.getTel();
+            String address=acc.getAddress();
+            String username=acc.getUsername();
+            String role=acc.getRoleID();
+            Object row[] = {i+1,id,name,username,role,tel,address};
+            tbDanhSachNhanVien.addRow(row);
+        }
+    }
+    
+    public void findVal(String str,String roleID) throws Exception {
+    	Vector<Account> arr=new Vector<Account>();
+    	if(roleID=="AD") {
+    		arr=staffBUS.allOutSearchAD(str);
+    	}
+    	if(roleID=="QL") {
+    		arr=staffBUS.allOutSearchQL(str);
+    	}
+    	if(arr.size()==0) {
+    		JOptionPane.showMessageDialog(null,"Không tìm thấy nhân viên theo yêu cầu");
+    		return;
+    	}
+    	tbDanhSachNhanVien.setRowCount(0);
+    	for(int i=0;i<arr.size();i++){
+    		Account acc=arr.get(i);
+            int id=acc.getPersonID();
+            String name=acc.getName();
+            String tel=acc.getTel();
+            String address=acc.getAddress();
+            String username=acc.getUsername();
+            String role=acc.getRoleID();
+            Object row[] = {i+1,id,name,username,role,tel,address};
+            tbDanhSachNhanVien.addRow(row);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -70,9 +158,20 @@ public class Staff_GUI extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tbDanhSachNhanVien.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbDanhSachNhanVienMouseClicked(evt);
+            }
+        });
         spTable.setViewportView(tbDanhSachNhanVien);
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/search.png"))); // NOI18N
+
+        txtTimKiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTimKiemActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelBorder_Basic1Layout = new javax.swing.GroupLayout(panelBorder_Basic1);
         panelBorder_Basic1.setLayout(panelBorder_Basic1Layout);
@@ -107,6 +206,11 @@ public class Staff_GUI extends javax.swing.JPanel {
         btnNhanVienMoi.setColorClick(new java.awt.Color(153, 204, 255));
         btnNhanVienMoi.setColorOver(new java.awt.Color(22, 113, 221));
         btnNhanVienMoi.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        btnNhanVienMoi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNhanVienMoiActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelBorder1Layout = new javax.swing.GroupLayout(panelBorder1);
         panelBorder1.setLayout(panelBorder1Layout);
@@ -155,6 +259,41 @@ public class Staff_GUI extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void tbDanhSachNhanVienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDanhSachNhanVienMouseClicked
+       if (evt.getClickCount() == 2) {
+            int row = tbDanhSachNhanVien.getSelectedRow();
+            if (row >= 0) {
+                String cellValue = tbDanhSachNhanVien.getValueAt(row, 1).toString();
+                int cellVal=Integer.parseInt(cellValue);
+                try {
+                        StaffInfor_Dialog ruid=new StaffInfor_Dialog(new javax.swing.JFrame(), true,cellVal,tbDanhSachNhanVien,roleID,userID);
+                        ruid.setVisible(true);
+                }catch(Exception ex) {
+                        JOptionPane.showMessageDialog(null,ex.getMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_tbDanhSachNhanVienMouseClicked
+
+    private void txtTimKiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTimKiemActionPerformed
+        String text = txtTimKiem.getText().trim();
+        try {
+            findVal(text,roleID);
+        } catch (Exception e1) {
+                // TODO Auto-generated catch block
+                JOptionPane.showMessageDialog(null,e1.getMessage());
+        }
+    }//GEN-LAST:event_txtTimKiemActionPerformed
+
+    private void btnNhanVienMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNhanVienMoiActionPerformed
+        try {
+            StaffAdd_Dialog sad=new StaffAdd_Dialog(new javax.swing.JFrame(), true,tbDanhSachNhanVien,userID,roleID);
+            sad.setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(Staff_GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnNhanVienMoiActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

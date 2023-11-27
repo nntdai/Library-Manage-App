@@ -4,20 +4,58 @@
  */
 package GUI;
 
+
+
+import BUS.ReaderBUS;
+import DTO.entities.Reader;
+import java.awt.HeadlessException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Vector;
+import javax.swing.JOptionPane;
 /**
  *
  * @author QUANG DIEN
  */
 public class ReaderAdd_Dialog extends javax.swing.JDialog {
-
+    ReaderBUS readerBUS;    
+    MyDesign.MyTable tab;
     /**
      * Creates new form TicketSearch_Dialog
      */
-    public ReaderAdd_Dialog(java.awt.Frame parent, boolean modal) {
+    public ReaderAdd_Dialog(java.awt.Frame parent, boolean modal,MyDesign.MyTable tab) throws ClassNotFoundException, SQLException {
         super(parent, modal);
+        readerBUS = new ReaderBUS();
         initComponents();
     }
-
+    public void addDefault(MyDesign.MyTable tab) throws Exception{
+    	tab.setRowCount(0);
+        Vector<Reader> arr=readerBUS.getAll();
+        for(int i=0;i<arr.size();i++){
+            Reader acc=arr.get(i);
+            int id=acc.getPersonID();
+            String name=acc.getName();
+            String tel=acc.getTel();
+            String address=acc.getAddress();
+            LocalDate fineDate=acc.getFineDate();
+            Integer isLocked= acc.getStatus();
+            String isL="Mở";
+            if(isLocked == 1){
+                isL="Khoá";
+            }
+            long daysBetween=0; 
+            if(fineDate!=null) {
+	            LocalDate cuDate=LocalDate.now();
+	            daysBetween = ChronoUnit.DAYS.between(cuDate, fineDate);
+            }        
+            Object row[] = {i+1,id,name,tel,address,daysBetween,isL};
+            tab.addRow(row);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -62,6 +100,11 @@ public class ReaderAdd_Dialog extends javax.swing.JDialog {
         btnThemDocGia.setBorderColor(new java.awt.Color(22, 113, 221));
         btnThemDocGia.setColor(new java.awt.Color(22, 113, 221));
         btnThemDocGia.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnThemDocGia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThemDocGiaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelBorder_Basic1Layout = new javax.swing.GroupLayout(panelBorder_Basic1);
         panelBorder_Basic1.setLayout(panelBorder_Basic1Layout);
@@ -146,6 +189,56 @@ public class ReaderAdd_Dialog extends javax.swing.JDialog {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+    public boolean checkDataVal(String name,String tel,String address) throws HeadlessException, FileNotFoundException, ClassNotFoundException, IOException, SQLException {
+    	if(name.equals("")) {
+    		JOptionPane.showMessageDialog(null,"Họ và tên không được để trống");
+    		txtTen.requestFocus();
+    		return false;
+    	}
+    	String nameReg = "^[\\p{L} \\.'\\-]+$";
+    	if(!name.matches(nameReg)) {
+    		JOptionPane.showMessageDialog(null,"Họ tên không hợp lệ");
+    		txtTen.requestFocus();
+    		return false;
+    	}
+    	if(tel.equals("")) {
+    		JOptionPane.showMessageDialog(null,"Số điện thoại không được để trống");
+    		txtSoDienThoai.requestFocus();
+    		return false;
+    	}
+    	if(!readerBUS.checkTel(tel)) {
+    		JOptionPane.showMessageDialog(null,"Số điện thoại đã có trong dữ liệu");
+    		txtSoDienThoai.requestFocus();
+    		return false;
+    	}
+    	String telReg = "^0[1-9][0-9]{8}$";
+    	if(!tel.matches(telReg)) {
+    		JOptionPane.showMessageDialog(null,"Số điện thoại không hợp lệ");
+    		txtSoDienThoai.requestFocus();
+    		return false;
+    	}
+    	if(address.equals("")) {
+    		JOptionPane.showMessageDialog(null,"Địa chỉ không được để trống");
+    		txtDiaChi.requestFocus();
+    		return false;
+    	}
+    	return true;
+    }
+    private void btnThemDocGiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemDocGiaActionPerformed
+        String name=txtTen.getText().trim();
+        String tel=txtSoDienThoai.getText().trim();
+        String address=txtDiaChi.getText().trim();
+        try {
+            if(checkDataVal(name,tel,address)) {
+                    JOptionPane.showMessageDialog(null,readerBUS.addReader(new Reader(name,tel,address)));
+                    addDefault(tab);
+                    dispose();
+            }
+        } catch (Exception e1) {
+                // TODO Auto-generated catch block
+                JOptionPane.showMessageDialog(null,e1.getMessage());
+        }
+    }//GEN-LAST:event_btnThemDocGiaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -174,20 +267,23 @@ public class ReaderAdd_Dialog extends javax.swing.JDialog {
         }
         //</editor-fold>
         //</editor-fold>
-
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                ReaderAdd_Dialog dialog = new ReaderAdd_Dialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
             }
-        });
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(ReaderAdd_Dialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(ReaderAdd_Dialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(ReaderAdd_Dialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(ReaderAdd_Dialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

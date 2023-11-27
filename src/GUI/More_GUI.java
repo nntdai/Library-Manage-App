@@ -4,46 +4,60 @@
  */
 package GUI;
 
+import BUS.AuthorBUS;
+import BUS.CategoryBUS;
+import BUS.PublisherBUS;
+import BUS.SupplyCardBUS;
 import MyDesign.ScrollBar;
 import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import DTO.entities.Author;
+import DTO.entities.Category;
+import DTO.entities.Publisher;
+import DTO.entities.SupplyCard;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author QUANG DIEN
  */
 public class More_GUI extends javax.swing.JPanel {
+    private Author author;
+    private Category category;
+    private Publisher publisher;    
+    private SupplyCard supplyCard;
+    private AuthorBUS authorBUS;
+    private SupplyCardBUS supplyCardBUS;
+    private CategoryBUS categoryBUS;
+    private PublisherBUS publisherBUS;
+    private List<Author> listAuthor;    
+    private List<Category> listCategory;
+    private List<Publisher> listPublisher;
+    private List<SupplyCard> listSupplier;
+
+    private DefaultTableModel authorsModel;    
+    private DefaultTableModel categoriesModel;
+    private DefaultTableModel publishersModel;
+    private DefaultTableModel suppliersModel;
 
     /**
      * Creates new form More_GUI
      */
-    public More_GUI() {
+    public More_GUI() throws SQLException, IOException {
         initComponents();
-        spTable.setVerticalScrollBar(new ScrollBar());
-        spTable.getVerticalScrollBar().setBackground(Color.WHITE);
-        spTable.getViewport().setBackground(Color.WHITE);
-        JPanel p = new JPanel();
-        p.setBackground(Color.WHITE);
-        spTable.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
-        
-        spTable1.setVerticalScrollBar(new ScrollBar());
-        spTable1.getVerticalScrollBar().setBackground(Color.WHITE);
-        spTable1.getViewport().setBackground(Color.WHITE);
-        p.setBackground(Color.WHITE);
-        spTable1.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
-        
-        spTable2.setVerticalScrollBar(new ScrollBar());
-        spTable2.getVerticalScrollBar().setBackground(Color.WHITE);
-        spTable2.getViewport().setBackground(Color.WHITE);
-        p.setBackground(Color.WHITE);
-        spTable2.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
-        
-        spTable3.setVerticalScrollBar(new ScrollBar());
-        spTable3.getVerticalScrollBar().setBackground(Color.WHITE);
-        spTable3.getViewport().setBackground(Color.WHITE);
-        p.setBackground(Color.WHITE);
-        spTable3.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
+        styles();
+        initTableAuthor();
+        initTableCategory();
+        initTablePublisher();
+        initTableSupplier();
     }
 
     /**
@@ -109,10 +123,20 @@ public class More_GUI extends javax.swing.JPanel {
         lbXoaTacGia.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbXoaTacGia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/action-delete.png"))); // NOI18N
         lbXoaTacGia.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(229, 229, 229)));
+        lbXoaTacGia.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbXoaTacGiaMouseClicked(evt);
+            }
+        });
 
         lbThemTacGia.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbThemTacGia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/add.png"))); // NOI18N
         lbThemTacGia.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(229, 229, 229)));
+        lbThemTacGia.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbThemTacGiaMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelBorder1Layout = new javax.swing.GroupLayout(panelBorder1);
         panelBorder1.setLayout(panelBorder1Layout);
@@ -170,10 +194,20 @@ public class More_GUI extends javax.swing.JPanel {
         lbXoaTheLoai.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbXoaTheLoai.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/action-delete.png"))); // NOI18N
         lbXoaTheLoai.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(229, 229, 229)));
+        lbXoaTheLoai.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbXoaTheLoaiMouseClicked(evt);
+            }
+        });
 
         lbThemTheLoai.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbThemTheLoai.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/add.png"))); // NOI18N
         lbThemTheLoai.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(229, 229, 229)));
+        lbThemTheLoai.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbThemTheLoaiMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelBorder2Layout = new javax.swing.GroupLayout(panelBorder2);
         panelBorder2.setLayout(panelBorder2Layout);
@@ -231,10 +265,20 @@ public class More_GUI extends javax.swing.JPanel {
         lbXoaNXB.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbXoaNXB.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/action-delete.png"))); // NOI18N
         lbXoaNXB.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(229, 229, 229)));
+        lbXoaNXB.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbXoaNXBMouseClicked(evt);
+            }
+        });
 
         lbThemNXB.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbThemNXB.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/add.png"))); // NOI18N
         lbThemNXB.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(229, 229, 229)));
+        lbThemNXB.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbThemNXBMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelBorder3Layout = new javax.swing.GroupLayout(panelBorder3);
         panelBorder3.setLayout(panelBorder3Layout);
@@ -292,10 +336,20 @@ public class More_GUI extends javax.swing.JPanel {
         lbThemNCC.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbThemNCC.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/add.png"))); // NOI18N
         lbThemNCC.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(229, 229, 229)));
+        lbThemNCC.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbThemNCCMouseClicked(evt);
+            }
+        });
 
         lbXoaNCC.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbXoaNCC.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/action-delete.png"))); // NOI18N
         lbXoaNCC.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(229, 229, 229)));
+        lbXoaNCC.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbXoaNCCMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelBorder4Layout = new javax.swing.GroupLayout(panelBorder4);
         panelBorder4.setLayout(panelBorder4Layout);
@@ -355,7 +409,283 @@ public class More_GUI extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+    
+    
+//    Group add
+    private void lbThemTacGiaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbThemTacGiaMouseClicked
+       if(evt.getClickCount()==1 || evt.getClickCount()==2)
+        {
+            setVisible(false);
+            WareHouseAddReader_Dialog r;
+           try { 
+               r = new WareHouseAddReader_Dialog(null,"more_gui", true);
+               r.setVisible(true);
+           } catch (SQLException ex) {
+               Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+           } catch (IOException ex) {
+               Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+           } catch (ClassNotFoundException ex) {
+               Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+           }
+        }
+    }//GEN-LAST:event_lbThemTacGiaMouseClicked
 
+    private void lbThemTheLoaiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbThemTheLoaiMouseClicked
+        if(evt.getClickCount()==1 || evt.getClickCount()==2)
+        {
+            setVisible(false);
+            WareHouseAddTypeBook_Dialog r;
+           try { 
+               r = new WareHouseAddTypeBook_Dialog(null,"more_gui", true);
+               r.setVisible(true);
+           } catch (SQLException ex) {
+               Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+           } catch (IOException ex) {
+               Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+           } catch (ClassNotFoundException ex) {
+               Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+           }
+        }
+    }//GEN-LAST:event_lbThemTheLoaiMouseClicked
+
+    private void lbThemNCCMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbThemNCCMouseClicked
+        if(evt.getClickCount()==1 || evt.getClickCount()==2)
+        {
+            setVisible(false);
+            WareHouseAddNCC_Dialog r;
+           try { 
+               r = new WareHouseAddNCC_Dialog(null,"more_gui", true);
+               r.setVisible(true);
+           } catch (SQLException ex) {
+               Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+           } catch (IOException ex) {
+               Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+           } catch (ClassNotFoundException ex) {
+               Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+           }
+        }
+    }//GEN-LAST:event_lbThemNCCMouseClicked
+
+    private void lbThemNXBMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbThemNXBMouseClicked
+        if(evt.getClickCount()==1 || evt.getClickCount()==2)
+        {
+            setVisible(false);
+            WareHouseAddNXB_Dialog r;
+           try { 
+               r = new WareHouseAddNXB_Dialog(null,"more_gui", true);
+               r.setVisible(true);
+           } catch (SQLException ex) {
+               Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+           } catch (IOException ex) {
+               Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+           } catch (ClassNotFoundException ex) {
+               Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+           }
+        }
+    }//GEN-LAST:event_lbThemNXBMouseClicked
+
+//    Group detele
+    private void lbXoaTacGiaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbXoaTacGiaMouseClicked
+        if(evt.getClickCount()==1 || evt.getClickCount()==2){
+            int selectedRow = tbTacGia.getSelectedRow();
+            if (selectedRow != -1) {
+                String tacGia = tbTacGia.getValueAt(selectedRow, 1).toString();
+                int option = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa tác giả " + tacGia + "?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+                if (option == JOptionPane.YES_OPTION) {
+                    try {
+                        authorBUS = new AuthorBUS();
+                        boolean check = authorBUS.deteleByAuthorName(tacGia);
+                        if(check == true){
+                            JOptionPane.showMessageDialog(panelBorder1, "Đã xóa thành công", "Xác nhận xóa", HEIGHT);
+                            DefaultTableModel model = (DefaultTableModel) tbTacGia.getModel();
+                            model.setRowCount(0);
+                            initTableAuthor();
+                        }
+                        
+                    } catch (SQLException ex) {
+                        Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }
+    }//GEN-LAST:event_lbXoaTacGiaMouseClicked
+
+    private void lbXoaTheLoaiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbXoaTheLoaiMouseClicked
+        if(evt.getClickCount()==1 || evt.getClickCount()==2){
+            int selectedRow = tbTheLoaiSach.getSelectedRow();
+            if (selectedRow != -1) {
+                String theloai = tbTheLoaiSach.getValueAt(selectedRow, 1).toString();
+                int option = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa thể loại " + theloai + "?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+                if (option == JOptionPane.YES_OPTION) {
+                    try {
+                        categoryBUS = new CategoryBUS();
+                        boolean check;
+                        try {
+                            check = categoryBUS.deleteByCategoryName(theloai);
+                            if(check == true){
+                                JOptionPane.showMessageDialog(panelBorder1, "Đã xóa thành công", "Xác nhận xóa", HEIGHT);
+                                DefaultTableModel model = (DefaultTableModel) tbTheLoaiSach.getModel();
+                                model.setRowCount(0);
+                                initTableCategory();
+                            }
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        
+                        
+                    } catch (SQLException ex) {
+                        Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }
+    }//GEN-LAST:event_lbXoaTheLoaiMouseClicked
+
+    private void lbXoaNCCMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbXoaNCCMouseClicked
+//        if(evt.getClickCount()==1 || evt.getClickCount()==2){
+//            int selectedRow = tbNhaCungCap.getSelectedRow();
+//            if (selectedRow != -1) {
+//                String theloai = tbTheLoaiSach.getValueAt(selectedRow, 1).toString();
+//                int option = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa thể loại " + theloai + "?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+//                if (option == JOptionPane.YES_OPTION) {
+//                    try {
+//                        categoryBUS = new CategoryBUS();
+//                        boolean check;
+//                        try {
+//                            check = categoryBUS.deleteByCategoryName(theloai);
+//                            if(check == true){
+//                                JOptionPane.showMessageDialog(panelBorder1, "Đã xóa thành công", "Xác nhận xóa", HEIGHT);
+//                                DefaultTableModel model = (DefaultTableModel) tbTheLoaiSach.getModel();
+//                                model.setRowCount(0);
+//                                initTableCategory();
+//                            }
+//                        } catch (ClassNotFoundException ex) {
+//                            Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+//                        }
+//                        
+//                        
+//                    } catch (SQLException ex) {
+//                        Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+//                    } catch (IOException ex) {
+//                        Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//                }
+//            }
+//        }
+    }//GEN-LAST:event_lbXoaNCCMouseClicked
+
+    private void lbXoaNXBMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbXoaNXBMouseClicked
+       if(evt.getClickCount()==1 || evt.getClickCount()==2){
+            int selectedRow = tbNhaXuatBan.getSelectedRow();
+            if (selectedRow != -1) {
+                String nhaxuatban = tbNhaXuatBan.getValueAt(selectedRow, 1).toString();
+                int option = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa nhà xuất bản " + nhaxuatban + "?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+                if (option == JOptionPane.YES_OPTION) {
+                    try {
+                        publisherBUS = new PublisherBUS();
+                        boolean check;
+                        check = publisherBUS.deleteByPublisherName(nhaxuatban);
+                        if(check == true){
+                            JOptionPane.showMessageDialog(panelBorder1, "Đã xóa thành công", "Xác nhận xóa", HEIGHT);
+                            DefaultTableModel model = (DefaultTableModel) tbNhaXuatBan.getModel();
+                            model.setRowCount(0);
+                            initTablePublisher();
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(More_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }
+    }//GEN-LAST:event_lbXoaNXBMouseClicked
+    public void initTableAuthor() throws SQLException, IOException{
+        authorBUS = new AuthorBUS();
+        listAuthor = authorBUS.getAllName();
+        authorsModel = (DefaultTableModel) tbTacGia.getModel();
+        String authorName;
+        int stt = 1;
+        for (Author author : listAuthor){
+            if(author.isStatus() == 0){
+                authorName = author.getName();
+                authorsModel.addRow(new Object[]{stt++,authorName});
+            }
+            
+        }
+    }
+    public void initTableCategory() throws SQLException, IOException{
+        categoryBUS = new CategoryBUS();
+        listCategory = categoryBUS.getAllName();
+        categoriesModel = (DefaultTableModel) tbTheLoaiSach.getModel();
+        String categoryName;
+        int stt = 1;
+        for(Category category : listCategory){
+            if(category.isStatus() == 0){
+                categoryName = category.getName();
+                categoriesModel.addRow(new Object[]{stt++,categoryName});
+            }
+            
+        }
+               
+    
+    }public void initTablePublisher() throws SQLException, IOException{
+        publisherBUS = new PublisherBUS();
+        listPublisher = publisherBUS.getAllName();
+        publishersModel = (DefaultTableModel) tbNhaXuatBan.getModel();
+        String publisherName;
+        int stt = 1;
+        for(Publisher publisher : listPublisher){
+            if(publisher.isStatus() == 0){
+                publisherName = publisher.getName();
+                publishersModel.addRow(new Object[]{stt++, publisherName});
+            }
+            
+        }
+    
+    }public void initTableSupplier() throws SQLException, IOException{
+        supplyCardBUS = new SupplyCardBUS();
+        listSupplier = supplyCardBUS.getAllName();
+        suppliersModel = (DefaultTableModel) tbNhaCungCap.getModel();
+        String supplierName;
+        int stt = 1;
+        for(SupplyCard supplier : listSupplier){
+            supplierName=supplier.getProvider();
+            suppliersModel.addRow(new Object[]{stt++,supplierName});
+        }
+    }
+    
+    
+    public void styles(){
+        spTable.setVerticalScrollBar(new ScrollBar());
+        spTable.getVerticalScrollBar().setBackground(Color.WHITE);
+        spTable.getViewport().setBackground(Color.WHITE);
+        JPanel p = new JPanel();
+        p.setBackground(Color.WHITE);
+        spTable.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
+        
+        spTable1.setVerticalScrollBar(new ScrollBar());
+        spTable1.getVerticalScrollBar().setBackground(Color.WHITE);
+        spTable1.getViewport().setBackground(Color.WHITE);
+        p.setBackground(Color.WHITE);
+        spTable1.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
+        
+        spTable2.setVerticalScrollBar(new ScrollBar());
+        spTable2.getVerticalScrollBar().setBackground(Color.WHITE);
+        spTable2.getViewport().setBackground(Color.WHITE);
+        p.setBackground(Color.WHITE);
+        spTable2.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
+        
+        spTable3.setVerticalScrollBar(new ScrollBar());
+        spTable3.getVerticalScrollBar().setBackground(Color.WHITE);
+        spTable3.getViewport().setBackground(Color.WHITE);
+        p.setBackground(Color.WHITE);
+        spTable3.setCorner(JScrollPane.UPPER_RIGHT_CORNER, p);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel5;
@@ -380,7 +710,7 @@ public class More_GUI extends javax.swing.JPanel {
     private javax.swing.JScrollPane spTable3;
     private MyDesign.MyTable tbNhaCungCap;
     private MyDesign.MyTable tbNhaXuatBan;
-    private MyDesign.MyTable tbTacGia;
+    MyDesign.MyTable tbTacGia;
     private MyDesign.MyTable tbTheLoaiSach;
     // End of variables declaration//GEN-END:variables
 }

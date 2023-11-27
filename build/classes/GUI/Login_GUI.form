@@ -35,11 +35,9 @@
   </Layout>
   <SubComponents>
     <Container class="MyDesign.Login" name="backgroundLogin">
-      <Properties>
-        <Property name="blur" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-          <ComponentRef name="panel"/>
-        </Property>
-      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="Login_GUI_backgroundLogin"/>
+      </AuxValues>
 
       <Layout>
         <DimensionLayout dim="0">
