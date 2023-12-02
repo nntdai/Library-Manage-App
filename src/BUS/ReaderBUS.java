@@ -94,7 +94,8 @@ public class ReaderBUS {
         return readerDAO.allOutSearch(fStr);
     }
 
-    public Vector<Reader> getReaderById(int infoID) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Vector<Reader> getReaderById(int infoID) throws ClassNotFoundException, SQLException, IOException {
+        readerDAO = new ReaderDAO();
+        return readerDAO.getReaderById(infoID);
     }
 }

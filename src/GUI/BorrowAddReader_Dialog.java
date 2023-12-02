@@ -8,6 +8,7 @@ import BUS.ReaderBUS;
 import DTO.entities.Reader;
 import MyDesign.ScrollBar;
 import java.awt.Color;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -220,6 +221,8 @@ public class BorrowAddReader_Dialog extends javax.swing.JDialog {
        } catch (ClassNotFoundException ex) {
            Logger.getLogger(BorrowAddReader_Dialog.class.getName()).log(Level.SEVERE, null, ex);
        } catch (SQLException ex) {
+           Logger.getLogger(BorrowAddReader_Dialog.class.getName()).log(Level.SEVERE, null, ex);
+       } catch (IOException ex) {
            Logger.getLogger(BorrowAddReader_Dialog.class.getName()).log(Level.SEVERE, null, ex);
        }
        

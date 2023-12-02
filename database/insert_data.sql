@@ -1901,27 +1901,27 @@ VALUES
 INSERT
     [dbo].[book_author] ([authorID], [ISBN])
 VALUES
-    (13, N'893-527-9-15017-5')
+    (13, N'893-527-9-15013-7')
 INSERT
     [dbo].[book_author] ([authorID], [ISBN])
 VALUES
-    (14, N'893-527-9-15017-5')
+    (17, N'893-527-9-15017-5')
 INSERT
     [dbo].[book_author] ([authorID], [ISBN])
 VALUES
-    (15, N'978-604-392-743-6')
+    (14, N'978-604-392-743-6')
 INSERT
     [dbo].[book_author] ([authorID], [ISBN])
 VALUES
-    (16, N'978-604-9-89534-0')
+    (15, N'978-604-9-89534-0')
 INSERT
     [dbo].[book_author] ([authorID], [ISBN])
 VALUES
-    (17, N'978-604-1-21989-2')
+    (16, N'978-604-1-21989-2')
 INSERT
     [dbo].[book_author] ([authorID], [ISBN])
 VALUES
-    (17, N'978-604-1-22010-2')
+    (16, N'978-604-1-22010-2')
 GO
     -- Table: book_category
 INSERT

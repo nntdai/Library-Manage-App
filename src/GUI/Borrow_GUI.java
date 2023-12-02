@@ -694,7 +694,7 @@ public class Borrow_GUI extends javax.swing.JPanel {
                  NumberFormat numberFormat = NumberFormat.getInstance(Locale.US);
                  String tinhTienCoc =numberFormat.format(tinhTienCoc());
                 String tongTienSach =numberFormat.format(tinhTongTienSach());
-                 JOptionPane.showMessageDialog(null, "Tiền cọc phải lớn hơn " + tinhTienCoc + " VND và nhỏ hơn " +tongTienSach+" VND!");
+                 JOptionPane.showMessageDialog(null, "Tiền cọc phải >= " + tinhTienCoc + " VNĐ và <= " +tongTienSach+" VNĐ!");
              }
                         
              else

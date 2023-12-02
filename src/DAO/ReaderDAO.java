@@ -94,8 +94,8 @@ public class ReaderDAO extends ConnectDB {
         return result;
     }
 
-      public ArrayList<Reader> getReaderById(int id) throws ClassNotFoundException, SQLException {
-        ArrayList<Reader> result = new ArrayList<>();
+      public Vector<Reader> getReaderById(int id) throws ClassNotFoundException, SQLException {
+        Vector<Reader> result = new Vector<>();
         connectDB.connect();
          
         if (ConnectDB.conn != null) {
@@ -116,8 +116,6 @@ public class ReaderDAO extends ConnectDB {
                     reader.setTel(rs.getString(3));
                     reader.setAddress(rs.getString(4));
                     Date lDate = rs.getDate(5);
-                    result.add(reader);
-                  
                     result.add(reader);
                 }
             } catch (SQLException ex) {
